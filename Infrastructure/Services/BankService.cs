@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
+using Core.Request;
 
 namespace Infrastructure.Services;
 
@@ -44,4 +45,5 @@ public class BankService : IBankService
     {
         return await _bankRepository.Update(model);
     }
+
 }

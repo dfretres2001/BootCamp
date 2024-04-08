@@ -31,13 +31,12 @@ public partial class BootcampContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new AccountConfiguration());
         modelBuilder.ApplyConfiguration(new BankConfiguration());
         modelBuilder.ApplyConfiguration(new CustomerConfiguration());
-        modelBuilder.ApplyConfiguration(new AccountConfiguration());
         modelBuilder.ApplyConfiguration(new MovementConfiguration());
         modelBuilder.ApplyConfiguration(new CurrentAccountConfiguration());
         modelBuilder.ApplyConfiguration(new SavingAccountConfiguration());
-
 
         OnModelCreatingPartial(modelBuilder);
     }

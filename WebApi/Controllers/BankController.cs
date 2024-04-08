@@ -1,7 +1,8 @@
 ﻿using Core.Interfaces.Repositories;
-using Core.Interfaces.Services; 
-using Core.Models;
+using Core.Interfaces.Services;
+using Core.Request;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApi.Controllers;
 
@@ -17,6 +18,16 @@ public class BankController : BaseApiController
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateBankModel request)
     {
+        //if (string.IsNullOrEmpty(request.Name))
+        //{
+        //    return BadRequest("Name is required");
+
+        //}
+        //if (request.Name.Length<5) 
+        //{
+        //return BadRequest("Name must have at least 5 characters");
+
+        //}
         return Ok(await _service.Add(request));
     }
 
@@ -45,4 +56,4 @@ public class BankController : BaseApiController
         var banks = await _service.GetAll();
         return Ok(banks);
     }
-}
+ }

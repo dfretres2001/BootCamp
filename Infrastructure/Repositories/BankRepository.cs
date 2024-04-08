@@ -1,8 +1,10 @@
-﻿using Core.Interfaces.Repositories;
+﻿using Core.Entities;
+using Core.Interfaces.Repositories;
 using Core.Models;
+using Core.Request;
+using Mapster;
 using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Core.Entities;
 
 namespace Infrastructure.Repositories;
 
@@ -17,27 +19,27 @@ public class BankRepository : IBankRepository
 
     public async Task<BankDTO> Add(CreateBankModel model)
     {
-        var bankToCreate = new Bank
-        {
-            Name = model.Name,
-            Address = model.Address,
-            Mail = model.Mail,
-            Phone = model.Phone
-        };
-
+        //var bankToCreate = new Bank
+        //{
+        //    Name = model.Name,
+        //    Address = model.Address,
+        //    Mail = model.Mail,
+        //    Phone = model.Phone
+        //};
+        var bankToCreate = model.Adapt<Bank>();
         _context.Banks.Add(bankToCreate);
 
         await _context.SaveChangesAsync();
 
-        var bankDTO = new BankDTO
-        {
-            Id = bankToCreate.Id,
-            Name = bankToCreate.Name,
-            Address = bankToCreate.Address,
-            Mail = bankToCreate.Mail,
-            Phone = bankToCreate.Phone
-        };
-
+        //var bankDTO = new BankDTO
+        //{
+        //    Id = bankToCreate.Id,
+        //    Name = bankToCreate.Name,
+        //    Address = bankToCreate.Address,
+        //    Mail = bankToCreate.Mail,
+        //    Phone = bankToCreate.Phone
+        //};
+        var bankDTO = bankToCreate.Adapt<BankDTO>();
         return bankDTO;
     }
 
@@ -45,7 +47,7 @@ public class BankRepository : IBankRepository
     {
         var bank = await _context.Banks.FindAsync(id);
 
-        if(bank is null) throw new Exception("Bank not found");
+        if (bank is null) throw new Exception("Bank not found");
 
         _context.Banks.Remove(bank);
 
@@ -58,14 +60,16 @@ public class BankRepository : IBankRepository
     {
         var banks = await _context.Banks.ToListAsync();
 
-        var banksDTO = banks.Select(bank => new BankDTO
-        {
-            Id = bank.Id,
-            Name = bank.Name,
-            Address = bank.Address,
-            Mail = bank.Mail,
-            Phone = bank.Phone
-        }).ToList();
+        //var banksDTO = banks.Select(bank => new BankDTO
+        //{
+        //    Id = bank.Id,
+        //    Name = bank.Name,
+        //    Address = bank.Address,
+        //    Mail = bank.Mail,
+        //    Phone = bank.Phone
+        //}).ToList();
+
+        var banksDTO = banks.Adapt<List<BankDTO>>();
 
         return banksDTO;
     }
@@ -74,16 +78,17 @@ public class BankRepository : IBankRepository
     {
         var bank = await _context.Banks.FindAsync(id);
 
-        if(bank is null) throw new Exception("Bank not found");
+         if (bank is null) throw new Exception("Bank not found");
 
-        var bankDTO = new BankDTO
-        {
-            Id = bank.Id,
-            Name = bank.Name,
-            Address = bank.Address,
-            Mail = bank.Mail,
-            Phone = bank.Phone
-        };
+        //var bankDTO = new BankDTO
+        //{
+        //    Id = bank.Id,
+        //    Name = bank.Name,
+        //    Address = bank.Address,
+        //    Mail = bank.Mail,
+        //    Phone = bank.Phone
+        //};
+        var bankDTO = bank.Adapt<BankDTO>();
 
         return bankDTO;
     }
@@ -99,24 +104,26 @@ public class BankRepository : IBankRepository
 
         if (bank is null) throw new Exception("Bank was not found");
 
-        bank.Name = model.Name;
-        bank.Address = model.Address;
-        bank.Mail = model.Mail;
-        bank.Phone = model.Phone;
+        //bank.Name = model.Name;
+        //bank.Address = model.Address;
+        //bank.Mail = model.Mail;
+        //bank.Phone = model.Phone;
+         model.Adapt(bank);
 
         _context.Banks.Update(bank);
 
         await _context.SaveChangesAsync();
 
-        var bankDTO = new BankDTO
-        {
-            Id = bank.Id,
-            Name = bank.Name,
-            Address = bank.Address,
-            Mail = bank.Mail,
-            Phone = bank.Phone
-        };
-
+        //var bankDTO = new BankDTO
+        //{
+        //    Id = bank.Id,
+        //    Name = bank.Name,
+        //    Address = bank.Address,
+        //    Mail = bank.Mail,
+        //    Phone = bank.Phone
+        //};
+            
+        var bankDTO = bank.Adapt<BankDTO>();
         return bankDTO;
     }
 }

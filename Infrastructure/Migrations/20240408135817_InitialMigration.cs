@@ -18,10 +18,10 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                    Phone = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Mail = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    Address = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: false)
+                    Address = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -49,14 +49,15 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                    Lastname = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    DocumentNumber = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
-                    Address = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
+                    Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Lastname = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    DocumentNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Address = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     Mail = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
-                    Phone = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: true),
-                    Estado = table.Column<int>(type: "integer", nullable: false),
-                    BankId = table.Column<int>(type: "integer", nullable: false)
+                    Phone = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    CustomerStatus = table.Column<int>(type: "integer", nullable: false),
+                    BankId = table.Column<int>(type: "integer", nullable: false),
+                    Birth = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -128,9 +129,9 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Destination = table.Column<string>(type: "character varying(150)", maxLength: 150, nullable: false),
+                    Destination = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     Amount = table.Column<decimal>(type: "numeric(20,5)", precision: 20, scale: 5, nullable: false),
-                    TransferredDateTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
+                    TransferredDateTime = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     TransferStatus = table.Column<int>(type: "integer", nullable: false),
                     AccountId = table.Column<int>(type: "integer", nullable: false)
                 },

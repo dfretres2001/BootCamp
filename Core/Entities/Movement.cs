@@ -1,6 +1,7 @@
 ﻿using Core.Constants;
 
 namespace Core.Entities;
+
 public class Movement
 {
     public int Id { get; set; }
