@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Exceptions;
 using Core.Interfaces.Repositories;
 using Core.Models;
 using Core.Request;
@@ -76,9 +77,10 @@ public class BankRepository : IBankRepository
 
     public async Task<BankDTO> GetById(int id)
     {
+        //throw new Exception("No se pudo conectar a la base de datos");
         var bank = await _context.Banks.FindAsync(id);
-
-         if (bank is null) throw new Exception("Bank not found");
+        if (bank is null) throw new NotFoundException($"Bank with id: {id} doest not exist");
+        // if (bank is null) throw new Exception("Bank not found");
 
         //var bankDTO = new BankDTO
         //{

@@ -28,15 +28,19 @@ public partial class BootcampContext : DbContext
     public virtual DbSet<CurrentAccount> CurrentAccounts { get; set; }
 
     public virtual DbSet<Movement> Movements { get; set; }
+    public virtual DbSet<Currency> Currencies { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+       
         modelBuilder.ApplyConfiguration(new AccountConfiguration());
         modelBuilder.ApplyConfiguration(new BankConfiguration());
         modelBuilder.ApplyConfiguration(new CustomerConfiguration());
         modelBuilder.ApplyConfiguration(new MovementConfiguration());
         modelBuilder.ApplyConfiguration(new CurrentAccountConfiguration());
         modelBuilder.ApplyConfiguration(new SavingAccountConfiguration());
+        modelBuilder.ApplyConfiguration(new CurrencyConfiguration());
+
 
         OnModelCreatingPartial(modelBuilder);
     }

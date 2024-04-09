@@ -1,4 +1,5 @@
 using Infrastructure;
+using WebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionHandleMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
