@@ -106,24 +106,11 @@ public class BankRepository : IBankRepository
 
         if (bank is null) throw new Exception("Bank was not found");
 
-        //bank.Name = model.Name;
-        //bank.Address = model.Address;
-        //bank.Mail = model.Mail;
-        //bank.Phone = model.Phone;
          model.Adapt(bank);
 
         _context.Banks.Update(bank);
 
         await _context.SaveChangesAsync();
-
-        //var bankDTO = new BankDTO
-        //{
-        //    Id = bank.Id,
-        //    Name = bank.Name,
-        //    Address = bank.Address,
-        //    Mail = bank.Mail,
-        //    Phone = bank.Phone
-        //};
             
         var bankDTO = bank.Adapt<BankDTO>();
         return bankDTO;

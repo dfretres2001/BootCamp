@@ -31,7 +31,6 @@ public class BankConfiguration : IEntityTypeConfiguration<Bank>
             .HasMaxLength(100)
             .IsRequired();
 
-
         entity
             .HasMany(bank => bank.Customers)
             .WithOne(customer => customer.Bank)

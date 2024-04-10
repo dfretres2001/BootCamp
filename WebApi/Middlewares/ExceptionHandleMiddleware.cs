@@ -6,7 +6,6 @@ using System.Text.Json;
 
 namespace WebApi.Middlewares;
 
-
 public class ExceptionHandleMiddleware
 {
     private readonly RequestDelegate _next;

@@ -4,7 +4,6 @@ using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
 using Core.Request;
-using Core.Requests;
 using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;

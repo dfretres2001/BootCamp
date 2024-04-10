@@ -23,10 +23,8 @@ public class MovementConfiguration : IEntityTypeConfiguration<Movement>
 
         entity
             .Property(e => e.TransferredDateTime);
-            
-
-
-        entity.HasOne(d => d.Account)
+        entity
+            .HasOne(d => d.Account)
             .WithMany(p => p.Movements)
             .HasForeignKey(d => d.AccountId);
             
