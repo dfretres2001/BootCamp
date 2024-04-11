@@ -1,6 +1,7 @@
 ﻿using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Request;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -16,6 +17,7 @@ public class BankController : BaseApiController
     }
 
     [HttpPost]
+    //[Authorize(Roles ="Admin, Seguridad, Invitado")]
     public async Task<IActionResult> Create([FromBody] CreateBankModel request)
     {
         //if (string.IsNullOrEmpty(request.Name))
