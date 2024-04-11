@@ -26,9 +26,10 @@ public class CurrentAccountConfiguration : IEntityTypeConfiguration<CurrentAccou
             .HasPrecision(20, 5);
 
 
-        entity.HasOne(d => d.Account)
-              .WithMany(p => p.CurrentAccounts)
-              .HasForeignKey(d => d.AccountId);
-        
+        entity
+            .HasOne(d => d.Account)
+            .WithOne(p => p.CurrentAccount)
+            .HasForeignKey<CurrentAccount>(d => d.AccountId);
+
     }
 }
