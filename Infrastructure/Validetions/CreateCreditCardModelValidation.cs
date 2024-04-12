@@ -37,7 +37,6 @@ public class CreateCreditCardModelValidation : AbstractValidator<CreateCreditCar
         RuleFor(x => x.AvailableCredit)
             .NotNull().WithMessage("Available Credit cannot be null")
             .GreaterThan(500000).WithMessage("Interest must be greater than five hundred thousand.");
-
         RuleFor(x => x.InterestRate)
             .NotNull().WithMessage("Interest Rate cannot be null")
             .GreaterThan(0).WithMessage("Interest must be greater than zero.");

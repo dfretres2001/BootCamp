@@ -6,7 +6,7 @@ using Mapster;
 
 namespace Infrastructure.Mappings;
 
-public class CurrencyMappingConfiguration
+public class CurrencyMappingConfiguration : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {

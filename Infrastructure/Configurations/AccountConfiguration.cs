@@ -20,8 +20,6 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
         entity
             .Property(e => e.Balance)
             .HasPrecision(20, 5);
-
-
         entity
             .HasOne(account => account.Currency)
             .WithMany(currency => currency.Accounts)
