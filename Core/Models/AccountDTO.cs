@@ -12,12 +12,12 @@ public class AccountDTO
     public string Number { get; set; } = string.Empty;
     public AccountType Type { get; set; } = AccountType.Current;
     public decimal Balance { get; set; }
-    public AccountStatus Status { get; set; } = AccountStatus.Active;
-    public IsDeletedStatus IsDeleted { get; set; } = IsDeletedStatus.False;
-    public int CurrencyId { get; set; }
+    public string Status { get; set; } = string.Empty;
+    //public IsDeletedStatus IsDeleted { get; set; } = IsDeletedStatus.False;
+    //public int CurrencyId { get; set; } //ojo
     public CurrencyDTO Currency { get; set; } = null!;
-    public int CustomerId { get; set; }
+    //public int CustomerId { get; set; } //ojo
     public CustomerDTO Customer { get; set; } = null!;
-    public SavingAccount SavingAccount { get; set; } = null!;
-    public CurrentAccount CurrentAccount { get; set; } = null!;
+    public SavingAccountDTO? SavingAccount { get; set; } 
+    public CurrentAccountDTO? CurrentAccount { get; set; } //OJO
 }

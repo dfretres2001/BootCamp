@@ -6,7 +6,7 @@ using FluentValidation;
 
 namespace Infrastructure.Validetions;
 
-public class CreateAccountModelValidation : AbstractValidator<CreateAccountModel>
+public class CreateAccountModelValidation : AbstractValidator<CreateAccountRequest>
 {
     public CreateAccountModelValidation()
     {
@@ -18,7 +18,7 @@ public class CreateAccountModelValidation : AbstractValidator<CreateAccountModel
             .NotNull().WithMessage("Number cannot be null")
             .NotEmpty().WithMessage("Number cannot be empty")
             .MaximumLength(50).WithMessage("Number cannot be longer than 50 characters");
-        RuleFor(x => x.Type)
+        RuleFor(x => x.AccountType)
             .Must(x => Enum.IsDefined(typeof(AccountType), x))
             .WithMessage("Invalid Account Type");
         //RuleFor(x => x.Balance)

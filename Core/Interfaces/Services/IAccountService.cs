@@ -8,7 +8,8 @@ namespace Core.Interfaces.Services;
 public interface IAccountService
 {
     Task<List<AccountDTO>> GetFiltered(FilterAccountModel filter);
-    Task<AccountDTO> Add(CreateAccountModel model);
+    Task<AccountDTO> GetById(int id);
+    Task<AccountDTO> Add(CreateAccountRequest model);
     Task<AccountDTO> Update(UpdateAccountModel model);
     Task<bool> Delete(int id);
 }

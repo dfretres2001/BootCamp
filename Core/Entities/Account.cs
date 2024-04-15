@@ -9,7 +9,7 @@ public class Account
     public string Number { get; set; } = string.Empty;
     public AccountType Type { get; set; } = AccountType.Current;
     public decimal Balance { get; set; }
-    public AccountStatus Status { get; set; } = AccountStatus.Active;
+    public AccountStatus Status { get; set; } = AccountStatus.Active; //ojo
 
     public IsDeletedStatus IsDeleted { get; set; }  = IsDeletedStatus.False;
     public int CurrencyId { get; set; }

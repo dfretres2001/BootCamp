@@ -20,30 +20,73 @@ public class AccountRepository : IAccountRepository
         _context = context;
     }
 
-    public async Task<AccountDTO> Add(CreateAccountModel model)
+    public async Task<AccountDTO> Add(CreateAccountRequest model)
     {
+        //var account = model.Adapt<Account>();
+        //var customer = await _context.Customers.FindAsync(model.CustomerId);
+        //var customer2 = await _context.Customers
+        //       .Include(c => c.Bank)
+        //       //.Include(c=> c.Accounts)
+        //       //.ThenInclude(a=> a.SavingAccount)
+        //       //.Include(c => c.Accounts)
+        //       //.ThenInclude(a => a.CurrentAccount)
+        //       .FirstOrDefaultAsync(c => c.Id == model.CustomerId);
+
+        //if (customer != null)
+        //{
+        //   account.Customer = customer;
+        //}
+        //var currency = await _context.Currencies.FindAsync(model.CurrencyId);
+        //if (currency != null)
+        //{
+        //  account.Currency = currency;
+        //}
+        //account.Status = AccountStatus.Active;
+        //account.IsDeleted = IsDeletedStatus.False;
+
+        //await _context.Accounts.AddAsync(account);
+        //await _context.SaveChangesAsync();
+        //var accountDTO = account.Adapt<AccountDTO>();
+        //return accountDTO;
+
         var account = model.Adapt<Account>();
-        var customer = await _context.Customers.FindAsync(model.CustomerId);
-        var customer2 = await _context.Customers
-               .Include(c => c.Bank)
-               .FirstOrDefaultAsync(c => c.Id == model.CustomerId);
 
-        if (customer != null)
-            {
-                account.Customer = customer;
-            }
-            var currency = await _context.Currencies.FindAsync(model.CurrencyId);
-            if (currency != null)
-            {
-                account.Currency = currency;
-            }
-        account.Status = AccountStatus.Active;
-        account.IsDeleted = IsDeletedStatus.False;
+        if (account.Type == AccountType.Saving)
+        {
+            account.SavingAccount = model.CreateSavingAccount.Adapt<SavingAccount>();
+        }
 
-        await _context.Accounts.AddAsync(account);
+        if (account.Type == AccountType.Current)
+        {
+            account.CurrentAccount = model.CreateCurrentAccount.Adapt<CurrentAccount>();
+        }
+
+        _context.Accounts.Add(account);
+
         await _context.SaveChangesAsync();
-        var accountDTO = account.Adapt<AccountDTO>();
-        return accountDTO;
+
+        var createdAccount = await _context.Accounts
+            .Include(a => a.Currency)
+            .Include(a => a.Customer)
+            .Include(a => a.SavingAccount)
+            .Include(a => a.CurrentAccount)
+            .FirstOrDefaultAsync(a => a.Id == account.Id);
+
+        return createdAccount.Adapt<AccountDTO>();
+    }
+    public async Task<AccountDTO> GetById(int id)
+    {
+        var account = await _context.Accounts
+            .Include(a => a.Currency)
+            .Include(a => a.Customer)
+            .ThenInclude(c => c.Bank)
+            .Include(a => a.SavingAccount)
+            .Include(a => a.CurrentAccount)
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (account is null) throw new NotFoundException($"The account with id: {id} doest not exist");
+
+        return account.Adapt<AccountDTO>();
     }
     public async Task<AccountDTO> Update(UpdateAccountModel model)
     {
@@ -53,8 +96,15 @@ public class AccountRepository : IAccountRepository
         model.Adapt(account);
         _context.Accounts.Update(account);
         await _context.SaveChangesAsync();
-        var creditCardDTO = account.Adapt<AccountDTO>();
-        return creditCardDTO;
+        //var accountDTO = account.Adapt<AccountDTO>();
+        var updateAccount = await _context.Accounts
+        .Include(a => a.Currency)
+        .Include(a => a.Customer)
+        .ThenInclude(c => c.Bank)
+        .Include(a => a.SavingAccount)
+        .Include(a => a.CurrentAccount)
+        .FirstOrDefaultAsync(a => a.Id == account.Id);
+        return updateAccount.Adapt<AccountDTO>();
     }
     public async Task<bool> Delete(int id)
     {
@@ -73,33 +123,53 @@ public class AccountRepository : IAccountRepository
 
     public async Task<List<AccountDTO>> GetFiltered(FilterAccountModel filter)
     {
+        
         var query = _context.Accounts
                    .Include(a => a.Currency)
                    .Include(a => a.Customer)
-                   .ThenInclude(c => c.Bank)
-                   .Where(a => a.IsDeleted != IsDeletedStatus.True)
-                   .AsQueryable(); 
+                   .ThenInclude(a => a.Bank)
+                   .Include(a => a.SavingAccount)
+                   .Include(a => a.CurrentAccount)
+                   //.Where(a => a.IsDeleted != IsDeletedStatus.True)
+                   .AsQueryable();
 
-        //var accounts = await _context.Accounts.Where(a => a.IsDeleted != IsDeletedStatus.False).ToListAsync();
+        //if (!string.IsNullOrWhiteSpace(filter.Number))
+        //{
+        //    query = query.Where(a => a.Number == filter.Number);
+        //}
 
-        if (!string.IsNullOrWhiteSpace(filter.Number))
+        //if (!string.IsNullOrWhiteSpace(filter.Number))
+        //{
+        //    query = query.Where(a => a.Number == filter.Number);
+        //}
+
+        //if (filter.Type is not null)
+        //{
+        //    query = query.Where(a => a.Type == filter.Type);
+        //}
+
+        //if (!string.IsNullOrWhiteSpace(filter.Currency))
+        //{
+        //    query = query.Where(a => a.Currency.Name == filter.Currency);
+        //}
+
+        if (filter.CurrencyId is not null)
         {
-            query = query.Where(a => a.Number == filter.Number);
+            query = query.Where(x =>
+                x.Currency != null &&
+                x.CurrencyId == filter.CurrencyId);
+        }
+        if (filter.Type.HasValue)
+        {
+            query = query.Where(x =>
+                x.Type == filter.Type.Value);
         }
 
-        if (!string.IsNullOrWhiteSpace(filter.Number))
+        if (filter.Number is not null)
         {
-            query = query.Where(a => a.Number == filter.Number);
-        }
-
-        if (filter.Type is not null)
-        {
-            query = query.Where(a => a.Type == filter.Type);
-        }
-
-        if (!string.IsNullOrWhiteSpace(filter.Currency))
-        {
-            query = query.Where(a => a.Currency.Name == filter.Currency);
+            query = query.Where(x =>
+                x.Number != null &&
+                x.Number.Equals(filter.Number));
         }
 
         var result = await query.ToListAsync();

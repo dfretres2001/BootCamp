@@ -1,34 +1,33 @@
 ﻿using Core.Interfaces.Services;
 using Core.Request;
-using Core.Requests;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
+
 namespace WebApi.Controllers;
 
-public class AccountController : BaseApiController
+public class PromotionController : BaseApiController
 {
-    private readonly IAccountService _service;
+    private readonly IPromotionService _service;
 
-    public AccountController(IAccountService accountService)
+    public PromotionController(IPromotionService service)
     {
-        _service = accountService;
+        _service = service;
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
-    => Ok(await _service.GetById(id));
+=> Ok(await _service.GetById(id));
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateAccountRequest request)
+    public async Task<IActionResult> Create([FromBody] CreatePromotionModel request)
     {
         return Ok(await _service.Add(request));
     }
     [HttpPut]
-    public async Task<IActionResult> Update([FromBody] UpdateAccountModel request)
+    public async Task<IActionResult> Update([FromBody] UpdatePromotionModel request)
     {
         return Ok(await _service.Update(request));
     }
     [HttpGet("filtered")]
-    public async Task<IActionResult> GetFiltered([FromQuery] FilterAccountModel filter)
+    public async Task<IActionResult> GetFiltered([FromQuery] FilterPromotionModel filter)
     {
         var account = await _service.GetFiltered(filter);
         return Ok(account);

@@ -15,7 +15,7 @@ public class AccountService : IAccountService
     {
         _accountRepository = accountRepository;
     }
-    public async Task<AccountDTO> Add(CreateAccountModel model)
+    public async Task<AccountDTO> Add(CreateAccountRequest model)
     {
         return await _accountRepository.Add(model);
     }
@@ -23,6 +23,11 @@ public class AccountService : IAccountService
     public async Task<bool> Delete(int id)
     {
         return await _accountRepository.Delete(id);
+    }
+
+    public async Task<AccountDTO> GetById(int id)
+    {
+        return await _accountRepository.GetById(id);
     }
 
     public async Task<List<AccountDTO>> GetFiltered(FilterAccountModel filter)

@@ -21,11 +21,9 @@ public class UpdateCustomerModelValidation : AbstractValidator<UpdateCustomerMod
         RuleFor(x => x.DocumentNumber)
             .NotNull().WithMessage("DocumentNumber cannot be null")
             .NotEmpty().WithMessage("DocumentNumber cannot be empty");
-
         RuleFor(x => x.Mail)
             .NotNull().WithMessage("Mail cannot be null")
             .EmailAddress();
-
         RuleFor(x => x.CustomerStatus)
             .Must(x => Enum.IsDefined(typeof(CustomerStatus), x))
             .WithMessage("Invalid customer status");
