@@ -2,7 +2,7 @@
 
 namespace Core.Request;
 
-public class FilterBusinessModel
+public class FilterEnterpriseModel
 {
     public int id { get; set; }
 }

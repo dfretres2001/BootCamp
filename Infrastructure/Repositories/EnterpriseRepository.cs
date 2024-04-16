@@ -9,66 +9,66 @@ using Mapster;
 
 namespace Infrastructure.Repositories;
 
-public class BusinessRepository : IBusinessRepository
+public class EnterpriseRepository : IEnterpriseRepository
 {
     private readonly BootcampContext _context;
-    public BusinessRepository(BootcampContext context)
+    public EnterpriseRepository(BootcampContext context)
     {
         _context = context;
     }
 
-    public async Task<BusinessDTO> Add(CreateBusinessModel model)
+    public async Task<EnterpriseDTO> Add(CreateEnterpriseModel model)
     {
-        var businessToCreate = model.Adapt<Business>();
-        _context.Businesses.Add(businessToCreate);
+        var businessToCreate = model.Adapt<Enterprise>();
+        _context.Enterprises.Add(businessToCreate);
 
         await _context.SaveChangesAsync();
-        var businessDTO = businessToCreate.Adapt<BusinessDTO>();
+        var businessDTO = businessToCreate.Adapt<EnterpriseDTO>();
         return businessDTO;
     }
 
     public async Task<bool> Delete(int id)
     {
-        var business = await _context.Businesses.FindAsync(id);
+        var business = await _context.Enterprises.FindAsync(id);
 
         if (business is null) throw new Exception("Business not found");
 
-        _context.Businesses.Remove(business);
+        _context.Enterprises.Remove(business);
 
         var result = await _context.SaveChangesAsync();
 
         return result > 0;
     }
 
-    public async Task<BusinessDTO> GetById(int id)
+    public async Task<EnterpriseDTO> GetById(int id)
     {
-        var business = await _context.Businesses.FindAsync(id);
+        var business = await _context.Enterprises.FindAsync(id);
 
         if (business is null) throw new NotFoundException($"Business with id: {id} doest not exist");
 
-        var businessDTO = business.Adapt<BusinessDTO>();
+        var businessDTO = business.Adapt<EnterpriseDTO>();
 
         return businessDTO;
     }
 
-    public async Task<List<BusinessDTO>> GetFiltered(FilterBusinessModel filter)
+    public async Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<BusinessDTO> Update(UpdateBusinessModel model)
+    public async Task<EnterpriseDTO> Update(UpdateEnterpriseModel model)
     {
-        var business = await _context.Businesses.FindAsync(model.Id);
+        var business = await _context.Enterprises.FindAsync(model.Id);
 
         if (business is null) throw new Exception("Business was not found");
 
         model.Adapt(business);
 
-        _context.Businesses.Update(business);
+        _context.Enterprises.Update(business);
 
         await _context.SaveChangesAsync();
 
-        var businessDTO = business.Adapt<BusinessDTO>();
+        var businessDTO = business.Adapt<EnterpriseDTO>();
         return businessDTO;
     }
 }

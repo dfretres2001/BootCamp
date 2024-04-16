@@ -6,7 +6,7 @@ using FluentValidation;
 
 namespace Infrastructure.Validetions;
 
-public class UpdateBusinessModelValidation : AbstractValidator<UpdateBusinessModel>
+public class UpdateBusinessModelValidation : AbstractValidator<UpdateEnterpriseModel>
 {
     public UpdateBusinessModelValidation()
     {

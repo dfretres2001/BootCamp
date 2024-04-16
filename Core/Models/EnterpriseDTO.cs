@@ -2,7 +2,7 @@
 
 namespace Core.Models;
 
-public class BusinessDTO
+public class EnterpriseDTO
 {
     public int Id { get; set; }
     public string? Name { get; set; }

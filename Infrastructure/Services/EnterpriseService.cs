@@ -8,15 +8,15 @@ using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;
 
-public class BusinessService : IBusinessService
+public class EnterpriseService : IEnterpriseService
 {
-    private readonly IBusinessRepository _businessRepository;
-    public BusinessService(IBusinessRepository businessRepository)
+    private readonly IEnterpriseRepository _businessRepository;
+    public EnterpriseService(IEnterpriseRepository businessRepository)
     {
         _businessRepository = businessRepository;
     }
 
-    public async Task<BusinessDTO> Add(CreateBusinessModel model)
+    public async Task<EnterpriseDTO> Add(CreateEnterpriseModel model)
     {
         return await _businessRepository.Add(model);
     }
@@ -26,17 +26,17 @@ public class BusinessService : IBusinessService
         return await _businessRepository.Delete(id);
     }
 
-    public async Task<BusinessDTO> GetById(int id)
+    public async Task<EnterpriseDTO> GetById(int id)
     {
         return await _businessRepository.GetById(id);
     }
 
-    public async Task<List<BusinessDTO>> GetFiltered(FilterBusinessModel filter)
+    public async Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<BusinessDTO> Update(UpdateBusinessModel model)
+    public async Task<EnterpriseDTO> Update(UpdateEnterpriseModel model)
     {
         return await _businessRepository.Update(model);
     }

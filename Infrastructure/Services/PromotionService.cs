@@ -31,7 +31,7 @@ public class PromotionService : IPromotionService
 
     public async Task<List<PromotionDTO>> GetFiltered(FilterPromotionModel filter)
     {
-        throw new NotImplementedException();
+        return await _promotionRepository.GetFiltered(filter);
     }
 
     public async Task<PromotionDTO> Update(UpdatePromotionModel model)

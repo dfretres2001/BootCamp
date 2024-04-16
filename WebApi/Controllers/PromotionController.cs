@@ -1,5 +1,7 @@
-﻿using Core.Interfaces.Services;
+﻿using Core.Entities;
+using Core.Interfaces.Services;
 using Core.Request;
+using Infrastructure.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -17,9 +19,9 @@ public class PromotionController : BaseApiController
 => Ok(await _service.GetById(id));
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreatePromotionModel request)
+    public async Task<IActionResult> Create([FromBody] CreatePromotionModel model)
     {
-        return Ok(await _service.Add(request));
+        return Ok(await _service.Add(model));
     }
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UpdatePromotionModel request)
@@ -29,8 +31,8 @@ public class PromotionController : BaseApiController
     [HttpGet("filtered")]
     public async Task<IActionResult> GetFiltered([FromQuery] FilterPromotionModel filter)
     {
-        var account = await _service.GetFiltered(filter);
-        return Ok(account);
+        var promotions = await _service.GetFiltered(filter);
+        return Ok(promotions);
     }
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)

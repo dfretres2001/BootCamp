@@ -1,13 +1,13 @@
 ﻿
 
-namespace Core.Entities;
+using Core.Entities;
 
-public class Business
+namespace Core.Request;
+
+public class CreateEnterpriseModel
 {
-    public int Id { get; set; }
     public string? Name { get; set; }
     public string? Address { get; set; }
     public string? Phone { get; set; }
     public string? Email { get; set; } = null;
-    public virtual ICollection<Promotion> Promotions { get; set; } = new List<Promotion>();
 }
