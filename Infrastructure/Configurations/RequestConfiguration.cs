@@ -1,0 +1,40 @@
+﻿
+using Core.Constants;
+using Core.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace Infrastructure.Configurations;
+
+public class RequestConfiguration : IEntityTypeConfiguration<Request>
+{
+    public void Configure(EntityTypeBuilder<Request> entity)
+    {
+        entity
+            .HasKey(r => r.Id)
+            .HasName("Request_pkey");
+        entity
+            .Property(r => r.Term)
+            .IsRequired();
+        entity
+            .Property(r => r.Amount)
+            .IsRequired();
+        entity
+            .Property(r => r.Brand)
+            .IsRequired();
+        //entity
+        //    .Property(r => r.RequestDate)
+        //    .IsRequired();
+        //entity
+        //    .Property(r => r.ApprovalDate)
+        //    .IsRequired();
+        entity
+            .HasOne(r => r.Currency)
+            .WithMany(c => c.Requests)
+            .HasForeignKey(r => r.CurrencyId);
+        entity
+            .HasOne(r => r.Customer)
+            .WithMany(c => c.Requests)
+            .HasForeignKey(r => r.CustomerId);
+    }
+}

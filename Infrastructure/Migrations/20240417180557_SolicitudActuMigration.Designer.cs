@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BootcampContext))]
-    partial class BootcampContextModelSnapshot : ModelSnapshot
+    [Migration("20240417180557_SolicitudActuMigration")]
+    partial class SolicitudActuMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -401,7 +404,13 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CurrencyId")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("CurrencyId1")
+                        .HasColumnType("integer");
+
                     b.Property<int>("CustomerId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("CustomerId1")
                         .HasColumnType("integer");
 
                     b.Property<int>("ProductType")
@@ -422,7 +431,11 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("CurrencyId");
 
+                    b.HasIndex("CurrencyId1");
+
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("CustomerId1");
 
                     b.ToTable("Requests");
                 });
@@ -548,16 +561,24 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Core.Entities.Request", b =>
                 {
                     b.HasOne("Core.Entities.Currency", "Currency")
-                        .WithMany("Requests")
+                        .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Entities.Customer", "Customer")
+                    b.HasOne("Core.Entities.Currency", null)
                         .WithMany("Requests")
+                        .HasForeignKey("CurrencyId1");
+
+                    b.HasOne("Core.Entities.Customer", "Customer")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Core.Entities.Customer", null)
+                        .WithMany("Requests")
+                        .HasForeignKey("CustomerId1");
 
                     b.Navigation("Currency");
 
