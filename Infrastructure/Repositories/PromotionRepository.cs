@@ -22,7 +22,6 @@ public class PromotionRepository : IPromotionRepository
     public async Task<PromotionDTO> Add(CreatePromotionModel model)
     {
         var promotion = model.Adapt<Promotion>();
-
         foreach (int enterpriseId in model.RelatedEnterpriseIds)
         {
             var promotionEnterprise = new PromotionEnterprise
@@ -32,7 +31,6 @@ public class PromotionRepository : IPromotionRepository
             };
             _context.PromotionEnterprises.Add(promotionEnterprise);
         }
-
         _context.Promotions.Add(promotion);
         await _context.SaveChangesAsync();
 
@@ -48,7 +46,6 @@ public class PromotionRepository : IPromotionRepository
         return promotionDTO;
     }
 
-
     public async Task<bool> Delete(int id)
     {
         var promotion = await _context.Promotions.FindAsync(id);
@@ -61,12 +58,13 @@ public class PromotionRepository : IPromotionRepository
     public async Task<PromotionDTO> GetById(int id)
     {
         var query = _context.Promotions
-                  .Include(a => a.PromotionsEnterprises)
-                  .ThenInclude(pe => pe.Enterprise)
-                  .AsQueryable();
+                      .Include(a => a.PromotionsEnterprises)
+                      .ThenInclude(pe => pe.Enterprise)
+                      .AsQueryable();
         var promotion = await query.FirstOrDefaultAsync(a => a.Id == id);
         if (promotion is null)
             throw new NotFoundException($"Promotion with id: {id} not found");
+
         var promotionDTO = promotion.Adapt<PromotionDTO>();
         return promotionDTO;
     }
@@ -77,20 +75,22 @@ public class PromotionRepository : IPromotionRepository
                          .Include(a => a.PromotionsEnterprises)
                          .ThenInclude(a => a.Enterprise)
                          .AsQueryable();
-
-
         if (filter.Id is not null)
         {
             query = query.Where(x =>
                  x.Id != null &&
                 (x.Id).Equals(filter.Id));
         }
-
         if (filter.Name is not null)
         {
             string normalizedFilterName = filter.Name.ToLower();
             query = query.Where(x =>
                 (x.Name).ToLower().Equals(normalizedFilterName));
+        }
+        if (filter.Discount > 0)
+        {
+            query = query.Where(x => x.Discount == filter.Discount);
+
         }
 
         var result = await query.ToListAsync();
@@ -100,26 +100,32 @@ public class PromotionRepository : IPromotionRepository
 
     public async Task<PromotionDTO> Update(UpdatePromotionModel model)
     {
-
-        var promotion = model.Adapt<Promotion>();
-        _context.Promotions.Update(promotion);
-
-        await _context.SaveChangesAsync();
-
-        var updatedPromotion = await _context.Promotions
-            .Include(a => a.PromotionsEnterprises)
-            .ThenInclude(pe => pe.Enterprise)
-            .FirstOrDefaultAsync(a => a.Id == promotion.Id);
-
-        if (updatedPromotion is not null)
+        var query = _context.Promotions
+                         .Include(a => a.PromotionsEnterprises)
+                         .ThenInclude(a => a.Enterprise)
+                         .AsQueryable();
+        var result = await query.ToListAsync();
+        var promotion = await _context.Promotions
+        .Include(p => p.PromotionsEnterprises)
+        .FirstOrDefaultAsync(p => p.Id == model.Id);
+        if (promotion == null)
         {
-            var promotionDTO = updatedPromotion.Adapt<PromotionDTO>();
-            promotionDTO.RelatedEnterprises = updatedPromotion.PromotionsEnterprises
-                .Select(pe => pe.Enterprise.Adapt<EnterpriseDTO>())
-                .ToList();
-            return promotionDTO;
+            throw new NotFoundException("Promotion not found");
+        }
+        model.Adapt(promotion);
+        promotion.PromotionsEnterprises.Clear();
+        foreach (int enterpriseId in model.RelatedEnterpriseIds)
+        {
+            var promotionEnterprise = new PromotionEnterprise
+            {
+                PromotionId = promotion.Id,
+                EnterpriseId = enterpriseId
+            };
+            promotion.PromotionsEnterprises.Add(promotionEnterprise);
         }
 
-        throw new NotFoundException($"Promotion with id: {promotion.Id} not found"); 
+        await _context.SaveChangesAsync();
+        var promotionDTO = promotion.Adapt<PromotionDTO>();
+        return promotionDTO;
     }
 }

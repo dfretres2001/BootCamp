@@ -16,8 +16,7 @@ public class PromotionController : BaseApiController
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
-=> Ok(await _service.GetById(id));
-
+    => Ok(await _service.GetById(id));
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreatePromotionModel model)
     {
@@ -34,6 +33,7 @@ public class PromotionController : BaseApiController
         var promotions = await _service.GetFiltered(filter);
         return Ok(promotions);
     }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

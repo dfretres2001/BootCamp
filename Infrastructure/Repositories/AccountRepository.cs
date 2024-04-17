@@ -111,10 +111,8 @@ public class AccountRepository : IAccountRepository
         var account = await _context.Accounts.FindAsync(id);
 
         if (account is null) throw new NotFoundException("Account with ID " + id + " was not found");
-
         account.IsDeleted = IsDeletedStatus.True;
         //account.Status = AccountStatus.Inactive;
-
         _context.Accounts.Update(account);
         await _context.SaveChangesAsync();
         var result = await _context.SaveChangesAsync();
