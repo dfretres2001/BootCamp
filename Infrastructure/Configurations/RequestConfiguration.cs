@@ -13,15 +13,22 @@ public class RequestConfiguration : IEntityTypeConfiguration<Request>
         entity
             .HasKey(r => r.Id)
             .HasName("Request_pkey");
+        //entity
+        //    .Property(r => r.Term)
+        //    .IsRequired();
+        //entity
+        //    .Property(r => r.Amount)
+        //    .IsRequired();
+        //entity
+        //    .Property(r => r.Brand)
+        //    .IsRequired();
         entity
-            .Property(r => r.Term)
+            .Property(r => r.Description)
             .IsRequired();
         entity
-            .Property(r => r.Amount)
-            .IsRequired();
-        entity
-            .Property(r => r.Brand)
-            .IsRequired();
+            .HasOne(r => r.Product)
+            .WithMany(p => p.Requests)
+            .HasForeignKey(r => r.ProductId);
         //entity
         //    .Property(r => r.RequestDate)
         //    .IsRequired();

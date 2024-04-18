@@ -22,26 +22,30 @@ public class RequestRepository : IRequestRepository
 
     public async Task<RequestDTO> Add(CreateRequestModel model)
     {
-        //throw new NotImplementedException();
+        //sacar dos llamados a la BD
         var request = model.Adapt<Request>();
         _context.Requests.Add(request);
         await _context.SaveChangesAsync();
-        var requestDTO = request.Adapt<RequestDTO>();
-        return requestDTO;
+        var Createrequest = await _context.Requests
+        .Include(r => r.Currency)
+        .Include(r => r.Product)
+        .Include(r => r.Customer)
+        .ThenInclude(r => r.Bank)
+        .SingleOrDefaultAsync(r => r.Id == request.Id);
+        return Createrequest.Adapt<RequestDTO>(); ;
     }
 
     public async Task<RequestDTO> GetById(int id)
     {
-        // Retrieve the Request entity from the database based on the id parameter
         var request = await _context.Requests
            .Include(r => r.Currency)
+           .Include(r => r.Product)
            .Include(r => r.Customer)
+           .ThenInclude(r=> r.Bank)
            .SingleOrDefaultAsync(r => r.Id == id);
-
-        // Return the Request entity as a RequestDTO
         if (request != null)
         {
-            return new RequestDTO();
+            return request.Adapt<RequestDTO>();
         }
         else
         {

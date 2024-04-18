@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BootcampContext))]
-    partial class BootcampContextModelSnapshot : ModelSnapshot
+    [Migration("20240418123830_ProductTableMigration")]
+    partial class ProductTableMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -404,8 +407,15 @@ namespace Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("numeric");
+
                     b.Property<DateTime?>("ApprovalDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("CurrencyId")
                         .HasColumnType("integer");
@@ -413,18 +423,21 @@ namespace Infrastructure.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Description")
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ProductType")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("ProductId")
-                        .IsRequired()
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("RequestDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Term")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
@@ -571,17 +584,13 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Entities.Product", "Product")
+                    b.HasOne("Core.Entities.Product", null)
                         .WithMany("Requests")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProductId");
 
                     b.Navigation("Currency");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Core.Entities.SavingAccount", b =>
