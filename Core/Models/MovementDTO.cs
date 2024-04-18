@@ -1,8 +1,11 @@
-﻿using Core.Constants;
+﻿
 
-namespace Core.Entities;
+using Core.Constants;
+using Core.Entities;
 
-public class Movement
+namespace Core.Models;
+
+public class MovementDTO
 {
     public int Id { get; set; }
     public string Description { get; set; } = string.Empty;

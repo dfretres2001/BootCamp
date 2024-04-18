@@ -1,10 +1,12 @@
-﻿using Core.Constants;
+﻿
 
-namespace Core.Entities;
+using Core.Constants;
+using Core.Entities;
 
-public class Movement
+namespace Core.Request;
+
+public class CreateMovementModel
 {
-    public int Id { get; set; }
     public string Description { get; set; } = string.Empty;
     public MovementType MovementType { get; set; } = MovementType.Transfer;
     public decimal Amount { get; set; }
@@ -12,5 +14,5 @@ public class Movement
     public TransferStatus TransferStatus { get; set; } = TransferStatus.Pending;
     public int OriginalAccountId { get; set; }
     public int DestinationAccountId { get; set; }
-    public Account Account { get; set; } = null!;
+    //public Account Account { get; set; } = null!;
 }
