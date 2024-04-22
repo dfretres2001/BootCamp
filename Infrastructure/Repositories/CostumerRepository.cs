@@ -148,7 +148,6 @@ public class CustomerRepository : ICustomerRepository
         return await _context.Customers.AnyAsync(customer => customer.Name == name);
     }
 
-
     public async Task<CustomerDTO> Update(UpdateCustomerModel model)
     {
         var customer = await _context.Customers.FindAsync(model.Id);

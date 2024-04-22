@@ -24,7 +24,7 @@ public class MovementeService : IMovementService
 
     public async Task<MovementDTO> GetById(int id)
     {
-        throw new NotImplementedException();
+        return await _movementRepository.GetById(id);
     }
 
     public async Task<(bool isValid, string message)> ValidateTransactionRules(CreateMovementModel model)

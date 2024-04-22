@@ -9,6 +9,7 @@ using Core.Request;
 using Infrastructure.Contexts;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace Infrastructure.Repositories;
 
@@ -23,155 +24,133 @@ public class MovementRepository : IMovementRepository
 
     public async Task<MovementDTO> Add(CreateMovementModel model)
     {
-        ////David: Encontrar la cuenta origen
-        //var originalAccount = await _context.Accounts
-        //    .Include(a => a.Currency)
-        //    .SingleOrDefaultAsync(a => a.Id == model.OriginalAccountId);
-
-        //if (originalAccount == null || originalAccount.Status != AccountStatus.Active)
-        //{
-        //    throw new BusinessLogicException("Invalid original account.");
-        //}
-        //if (originalAccount.Customer != null && originalAccount.Customer.Bank.Id == model.DestinationBankId)
-        //{
-        //    if (string.IsNullOrEmpty(model.DestinationAccountNumber) || string.IsNullOrEmpty(model.DestinationAccountNumber) || model.DestinationBankId == 0)
-        //    {
-        //        throw new BusinessLogicException("Document number, account number, and destiny bank ID are required when transferring within the same bank.");
-        //    }
-        //}
-
-        //// David: Validar el importe de la transferencia
-        //if (model.Amount > originalAccount.Balance)
-        //{
-        //    throw new BusinessLogicException("Insufficient balance.");
-        //}
-
-        //// Find the destination account
-        //var destinationAccount = await FindDestinationAccount(model);
-
-        //// Validate the destination account
-        //if (destinationAccount == null)
-        //{ 
-        //    throw new BusinessLogicException("Invalid destination account.");
-        //}
-
-        //// Validate the account types
-        //if (originalAccount.Type != destinationAccount.Type)
-        //{
-        //    throw new BusinessLogicException("Incompatible account types.");
-        //}
-
-        //// Validate the currencies
-        //if (originalAccount.CurrencyId != destinationAccount.CurrencyId)
-        //{
-        //    throw new BusinessLogicException("Incompatible currencies.");
-        //}
-
-        ////Corregir!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        //// Validate the operational limit (if applicable)
-        //if (originalAccount.Type == AccountType.Current
-        //    && originalAccount.CurrentAccount!.OperationalLimit < model.Amount)
-        //{
-        //    throw new ArgumentException("Operational limit exceeded.");
-        //}
-        //var movement = model.Adapt<Movement>();
-        //movement.TransferredDateTime = DateTime.UtcNow; //Ojo
-        //// Save the movement
-        //_context.Movements.Add(movement);
-        //await _context.SaveChangesAsync();
-
-        //// Update the balances
-        //originalAccount.Balance -= model.Amount;
-        //destinationAccount.Balance += model.Amount;
-
-        //await _context.SaveChangesAsync();
-
-        //return model.Adapt<MovementDTO>();
-
-        // Validar las reglas de negocio antes de agregar el movimiento
-        await ValidateTransactionRules(model);
-
+        // Validate the transaction rules
+        var validationResult = await ValidateTransactionRules(model);
+        if (!validationResult.isValid)
+        {
+            throw new InvalidOperationException(validationResult.message);
+        }
         var movement = model.Adapt<Movement>();
         movement.TransferredDateTime = DateTime.UtcNow;
-
-        // Agregar el movimiento a la base de datos
+        // Add the movement to the database
         _context.Movements.Add(movement);
         await _context.SaveChangesAsync();
-
-        // Actualizar los saldos de las cuentas
+        // Update the balances of the accounts
         var originalAccount = await _context.Accounts.FindAsync(model.OriginalAccountId);
         originalAccount.Balance -= model.Amount;
-
         var destinationAccount = await FindDestinationAccount(model);
         destinationAccount.Balance += model.Amount;
 
+        if (originalAccount.Type == AccountType.Current)
+        {
+            originalAccount.CurrentAccount!.OperationalLimit -= model.Amount;
+        }
         await _context.SaveChangesAsync();
 
-        return model.Adapt<MovementDTO>();
+        // Map the movement to a DTO and return it
+        var createdMovement = await _context.Movements
+            .Include(a => a.Account)
+            .ThenInclude(a => a.Currency)
+            .Include(a => a.Account)
+            .ThenInclude(a => a.Customer)
+            .ThenInclude(c => c.Bank)
+            .FirstOrDefaultAsync(a => a.Id == movement.Id);
+        return createdMovement.Adapt<MovementDTO>();
     }
 
     public async Task<(bool isValid, string message)> ValidateTransactionRules(CreateMovementModel model)
     {
+        // Validate the original account
         var originalAccount = await _context.Accounts
-            .Include(a => a.Currency)
+            .Include(a => a.Currency) 
+            .Include(a => a.CurrentAccount)
+            .Include(a => a.SavingAccount)
             .SingleOrDefaultAsync(a => a.Id == model.OriginalAccountId);
 
         if (originalAccount == null || originalAccount.Status != AccountStatus.Active)
         {
-            throw new BusinessLogicException("Invalid original account.");
+            return (false, "Invalid original account.");
         }
-
-        if (originalAccount.Customer != null && originalAccount.Customer.Bank.Id == model.DestinationBankId)
-        {
-            if (string.IsNullOrEmpty(model.DestinationAccountNumber) || string.IsNullOrEmpty(model.DestinationAccountNumber) || model.DestinationBankId == 0)
-            {
-                throw new BusinessLogicException("Document number, account number, and destiny bank ID are required when transferring within the same bank.");
-            }
-        }
-
-        if (model.Amount > originalAccount.Balance)
-        {
-            throw new BusinessLogicException("Insufficient balance.");
-        }
-
+        // Validate the destination account
         var destinationAccount = await FindDestinationAccount(model);
-
         if (destinationAccount == null)
         {
-            throw new BusinessLogicException("Invalid destination account.");
+            return (false, "Invalid destination account.");
         }
 
         if (originalAccount.Type != destinationAccount.Type)
         {
-            throw new BusinessLogicException("Incompatible account types.");
+            return (false, "Incompatible account types.");
         }
 
         if (originalAccount.CurrencyId != destinationAccount.CurrencyId)
         {
-            throw new BusinessLogicException("Incompatible currencies.");
+            return (false, "Incompatible currencies.");
+        }
+        // Validate the operational limit (if applicable)
+        //if (originalAccount.Type == AccountType.Current
+        //    && originalAccount.CurrentAccount!.OperationalLimit < model.Amount)
+        //{
+        //    //originalAccount.CurrentAccount.OperationalLimit -= model.Amount;
+        //    return (false, "Operational limit exceeded.");
+        //}
+
+        // Validate the operational limit (if applicable)
+        if (originalAccount.Type == AccountType.Current)
+        {
+            var currentAccount = originalAccount.CurrentAccount;
+            var currentMonth = DateTime.UtcNow.Month;
+            var totalTransfersThisMonth = await _context.Movements
+                .Where(m => m.OriginalAccountId == originalAccount.Id && m.TransferredDateTime.HasValue && m.TransferredDateTime.Value.Month == currentMonth)
+                .SumAsync(m => m.Amount);
+            var remainingOperationalLimit = currentAccount.OperationalLimit - totalTransfersThisMonth;
+            if (remainingOperationalLimit < model.Amount)
+            {
+                return (false, "The transfer amount exceeds the operational limit.");
+            }
         }
 
-        if (originalAccount.Type == AccountType.Current && originalAccount.CurrentAccount!.OperationalLimit < model.Amount)
+        // Validate the amount
+        if (model.Amount <= 0)
         {
-            throw new ArgumentException("Operational limit exceeded.");
+            return (false, "Invalid amount.");
         }
-        return (true, "Todo bien");
+        // Validate the transfer date and time
+        if (model.TransferredDateTime == null)
+        {
+            return (false, "Invalid transfer date and time.");
+        }
+        // Validate the destination bank (if applicable)
+        if (originalAccount.Customer != null && originalAccount.Customer.Bank.Id
+            == model.DestinationBankId)
+        {
+            if (string.IsNullOrEmpty(model.DestinationAccountNumber) || 
+                string.IsNullOrEmpty(model.DestinationAccountNumber) || 
+                model.DestinationBankId == 0)
+            {
+                return (false, "Document number, account number, and destiny bank ID " +
+                    "are required when transferring within the same bank.");
+            }
+        }
+        await _context.SaveChangesAsync();
+        return (true, "Transaction is valid.");
     }
 
     //busca la cuenta destino utilizando el número de cuenta, el nro ci.
     //Si se proporciona un Id de cuenta destino, se devuelve directamente esa cuenta.
     //Si no se encuentra la cuenta destino, devuelve null.
-    private async Task<Account?> FindDestinationAccount(CreateMovementModel model)
+    public async Task<Account?> FindDestinationAccount(CreateMovementModel model)
     {
         // If the destination account ID is provided, use it
         if (model.DestinationAccountId != 0)
         {
             return await _context.Accounts.FindAsync(model.DestinationAccountId);
         }
-
         // Otherwise, search for the destination account using the provided data
         return await _context.Accounts
             .Include(a => a.Currency)
+            .Include(a => a.CurrentAccount)
+            .Include(a => a.SavingAccount)
             .Include(a => a.Customer)
             .ThenInclude(c => c.Bank)
             .SingleOrDefaultAsync(a =>
@@ -180,9 +159,25 @@ public class MovementRepository : IMovementRepository
             a.CurrencyId == model.CurrencyId &&
             a.Customer.Bank.Id == model.DestinationBankId);
     }
-
     public async Task<MovementDTO> GetById(int id)
     {
-        throw new NotImplementedException();
+        var movement = await _context.Movements
+            .Include(a => a.Account)
+            .ThenInclude(a => a.Currency)
+            .Include(a => a.Account)
+            .ThenInclude(a => a.CurrentAccount)
+            .Include(a => a.Account)
+            .ThenInclude(a => a.SavingAccount)
+            .Include(a => a.Account)
+            .ThenInclude(a => a.Customer)
+            .ThenInclude(c => c.Bank)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
+        if (movement == null)
+        {
+            throw new NotFoundException($"Movement with ID {id} not found.");
+        }
+
+        return movement.Adapt<MovementDTO>();
     }
 }

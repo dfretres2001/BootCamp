@@ -15,5 +15,6 @@ public class MovementDTO
     public TransferStatus TransferStatus { get; set; } = TransferStatus.Pending;
     public int OriginalAccountId { get; set; }
     public int DestinationAccountId { get; set; }
-    public Account Account { get; set; } = null!;
+    public AccountDTO Account { get; set; } = null!;
+    //public int? OriginalAccountOperationalLimit { get; set; }
 }

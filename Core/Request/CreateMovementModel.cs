@@ -14,9 +14,10 @@ public class CreateMovementModel
     public TransferStatus TransferStatus { get; set; } = TransferStatus.Pending;
     public int OriginalAccountId { get; set; }
     public int DestinationAccountId { get; set; }
-    //public Account Account { get; set; } = null!;
+    //public Account Account { get; set; } = null!; hace que traiga todos los campos
     public string? DestinationAccountNumber { get; set; }
     public string? DestinationDocumentNumber { get; set; }
     public int CurrencyId { get; set; }
     public int DestinationBankId { get; set; }
+    //public int? OriginalAccountOperationalLimit { get; set; }
 }
