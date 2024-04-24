@@ -6,7 +6,6 @@ using Core.Request;
 using Mapster;
 using Infrastructure.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Core.Requests;
 
 namespace Infrastructure.Repositories;
 

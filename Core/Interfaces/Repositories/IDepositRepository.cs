@@ -8,4 +8,5 @@ namespace Core.Interfaces.Repositories;
 public interface IDepositRepository
 {
     Task<DepositDTO> Add(CreateDepositModel model);
+    Task<(bool isValid, string message)> DataValidationForDeposit(CreateDepositModel model);
 }

@@ -21,4 +21,9 @@ public class WithdrawalService : IWithdrawalService
     {
         return await _withdrawalRepository.Add(model);
     }
+
+    public async Task<(bool isValid, string message)> DataValidationForWithdrawal(CreateWithdrawalModel model)
+    {
+        return await _withdrawalRepository.DataValidationForWithdrawal(model);
+    }
 }

@@ -9,4 +9,5 @@ namespace Core.Interfaces.Repositories;
 public interface IWithdrawalRepository
 {
     Task<WithdrawalDTO> Add(CreateWithdrawalModel model);
+    Task<(bool isValid, string message)> DataValidationForWithdrawal(CreateWithdrawalModel model);
 }

@@ -21,4 +21,9 @@ public class DepositService : IDepositService
     {
         return await _depositRepository.Add(model);
     }
+
+    public async Task<(bool isValid, string message)> DataValidationForDeposit(CreateDepositModel model)
+    {
+        return await _depositRepository.DataValidationForDeposit(model);
+    }
 }
