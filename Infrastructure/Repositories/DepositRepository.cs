@@ -24,6 +24,10 @@ public class DepositRepository : IDepositRepository
         {
             throw new ArgumentException(message);
         }
+
+        //model.DepositDateTime = DateTime.SpecifyKind(model.DepositDateTime, DateTimeKind.Utc);
+        model.DepositDateTime = model.DepositDateTime.ToLocalTime();
+        await CheckOperationalLimit(model.AccountId, model.Amount, model.DepositDateTime);
         var depositToCreate = model.Adapt<Deposit>();
         _context.Deposits.Add(depositToCreate);
         var account = await _context.Accounts
@@ -53,19 +57,16 @@ public class DepositRepository : IDepositRepository
         {
             return (false, "The bank does not exist.");
         }
-
-        // Check if the deposit date is not in the past
-        if (model.DepositDateTime < DateTime.Now)
-        {
-            return (false, "The deposit date cannot be in the past.");
-        }
-
+        //// Check if the deposit date is not in the past
+        //if (model.DepositDateTime < DateTime.Now)
+        //{
+        //    return (false, "The deposit date cannot be in the past.");
+        //}
         // Check if the amount is not negative
         if (model.Amount < 0)
         {
             return (false, "The deposit amount cannot be negative.");
         }
-
         if (account.CurrentAccount?.OperationalLimit < model.Amount)
         {
             return (false, "The deposit amount exceeds the operational limit.");
@@ -73,4 +74,32 @@ public class DepositRepository : IDepositRepository
 
         return (true, "Validations passed.");
     }
+
+    public async Task CheckOperationalLimit(int accountId, decimal amount, DateTime transactionDate)
+    {
+        // Calculate the first and last date of the month for the transaction date
+        var firstDateOfMonth = new DateTime(transactionDate.Year, transactionDate.Month, 1);
+        var lastDateOfMonth = firstDateOfMonth.AddMonths(1).AddDays(-1);
+        // Get the OperationalLimit for the associated CurrentAccount
+        var account = await _context.Accounts
+            .Include(m => m.CurrentAccount)
+            .Where(m => m.Id == accountId)
+            .FirstOrDefaultAsync();
+
+        if (account?.CurrentAccount?.OperationalLimit.HasValue == true)
+        {
+            // Calculate the total deposits for the current month for the specified AccountId
+            decimal currentMonthDeposits = await _context.Deposits
+                .Where(d => d.AccountId == accountId && d.DepositDateTime >= firstDateOfMonth && 
+                d.DepositDateTime <= lastDateOfMonth)
+                .SumAsync(d => d.Amount);
+
+            // Check if the new deposit amount + the current month's deposits exceed the OperationalLimit
+            if ((currentMonthDeposits + amount) > account.CurrentAccount.OperationalLimit.Value)
+            {
+                throw new ArgumentException($"The deposit amount exceeds the operational limit of ${account.CurrentAccount.OperationalLimit.Value:F2} for the current month.");
+            }
+        }
+    }
+
 }

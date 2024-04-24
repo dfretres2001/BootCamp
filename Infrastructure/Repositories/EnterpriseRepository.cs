@@ -51,10 +51,10 @@ public class EnterpriseRepository : IEnterpriseRepository
         return businessDTO;
     }
 
-    public async Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter)
-    {
-        throw new NotImplementedException();
-    }
+    //public async Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
     public async Task<EnterpriseDTO> Update(UpdateEnterpriseModel model)
     {

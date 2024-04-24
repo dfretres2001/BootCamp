@@ -14,6 +14,12 @@ builder.Services.AddWebApi(builder.Configuration);
 
 //builder.WebHost.ConfigureKestrel(so => { so.ListenAnyIP(8080); });
 
+//builder.WebHost.ConfigureKestrel(serverOptions =>
+//{
+//    //192.168.125.70
+//    serverOptions.ListenAnyIP(8080);
+//});
+
 var app = builder.Build();
 
 

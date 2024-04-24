@@ -73,6 +73,7 @@ public static class DependencyInjection
         services.AddScoped<IPaymentService, PaymentService>();
         services.AddScoped<IDepositService, DepositService>();
         services.AddScoped<IWithdrawalService, WithdrawalService>();
+        //services.AddScoped<IOperationalLimitService, OperationalLimitService>();
         return services;
     }
 

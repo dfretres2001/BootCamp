@@ -31,10 +31,10 @@ public class EnterpriseService : IEnterpriseService
         return await _businessRepository.GetById(id);
     }
 
-    public async Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter)
-    {
-        throw new NotImplementedException();
-    }
+    //public async Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
     public async Task<EnterpriseDTO> Update(UpdateEnterpriseModel model)
     {

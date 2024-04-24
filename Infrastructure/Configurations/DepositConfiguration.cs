@@ -21,5 +21,10 @@ public class DepositConfiguration : IEntityTypeConfiguration<Deposit>
         entity.HasOne(d => d.Account)
            .WithMany(p => p.Deposits)
            .HasForeignKey(d => d.AccountId);
+
+        entity
+            .Property(e => e.DepositDateTime)
+            .HasColumnType("timestamp")
+            .IsRequired();
     }
 }
