@@ -24,8 +24,6 @@ public class DepositRepository : IDepositRepository
         {
             throw new ArgumentException(message);
         }
-
-        //model.DepositDateTime = DateTime.SpecifyKind(model.DepositDateTime, DateTimeKind.Utc);
         model.DepositDateTime = model.DepositDateTime.ToLocalTime();
         await CheckOperationalLimit(model.AccountId, model.Amount, model.DepositDateTime);
         var depositToCreate = model.Adapt<Deposit>();

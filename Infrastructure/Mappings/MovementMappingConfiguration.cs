@@ -14,7 +14,8 @@ public class MovementMappingConfiguration : IRegister
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.MovementType, src => src.MovementType)
             .Map(dest => dest.Amount, src => src.Amount)
-            .Map(dest => dest.TransferredDateTime, src => DateTime.Parse(src.TransferredDateTime))
+             //.Map(dest => dest.TransferredDateTime, src => DateTime.Parse(src.TransferredDateTime))
+            .Map(dest => dest.TransferredDateTime, src => src.TransferredDateTime)
             .Map(dest => dest.TransferStatus, src => src.TransferStatus)
             .Map(dest => dest.OriginalAccountId, src => src.OriginalAccountId)
             .Map(dest => dest.DestinationAccountId, src => src.DestinationAccountId);

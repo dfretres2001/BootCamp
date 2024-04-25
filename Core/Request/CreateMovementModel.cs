@@ -8,7 +8,7 @@ namespace Core.Request;
 public class CreateMovementModel
 {
     public string Description { get; set; } = string.Empty;
-    public string TransferredDateTime { get; set; } = string.Empty;
+    public DateTime TransferredDateTime { get; set; }
     public MovementType MovementType { get; set; } = MovementType.Transfer;
     public decimal Amount { get; set; }
     public TransferStatus TransferStatus { get; set; } = TransferStatus.Pending;
