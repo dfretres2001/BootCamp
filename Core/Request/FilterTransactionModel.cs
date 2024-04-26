@@ -1,4 +1,6 @@
 ﻿
+using Core.Constants;
+
 namespace Core.Request;
 
 public class FilterTransactionModel
@@ -8,6 +10,5 @@ public class FilterTransactionModel
     public int? Year { get; set; }
     public DateTime? FromDate { get; set; }
     public DateTime? ToDate { get; set; }
-    public string? Description { get; set; }
-    public string? MovementType { get; set; }
+    public TransactionType ConceptType { get; set; } = TransactionType.All;
 }

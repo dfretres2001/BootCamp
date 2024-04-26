@@ -72,7 +72,11 @@ public class MovementRepository : IMovementRepository
             return (false, "Invalid original account.");
         }
         // Validate the destination account
-        var destinationAccount = await FindDestinationAccount(model);
+        var destinationAccount = await _context.Accounts
+            .Include(a => a.Currency)
+            .Include(a => a.CurrentAccount)
+            .Include(a => a.SavingAccount)
+            .SingleOrDefaultAsync(a => a.Id == model.DestinationAccountId);
         if (destinationAccount == null)
         {
             return (false, "Invalid destination account.");
@@ -88,25 +92,51 @@ public class MovementRepository : IMovementRepository
             return (false, "Incompatible currencies.");
         }
         // Validate the operational limit (if applicable)
-        //if (originalAccount.Type == AccountType.Current
-        //    && originalAccount.CurrentAccount!.OperationalLimit < model.Amount)
-        //{
-        //    //originalAccount.CurrentAccount.OperationalLimit -= model.Amount;
-        //    return (false, "Operational limit exceeded.");
-        //}
-
-        // Validate the operational limit (if applicable)
-        if (originalAccount.Type == AccountType.Current)
+            if (originalAccount.Type == AccountType.Current)
         {
-            var currentAccount = originalAccount.CurrentAccount;
-            var currentMonth = DateTime.UtcNow.Month;
-            var totalTransfersThisMonth = await _context.Movements
-                .Where(m => m.OriginalAccountId == originalAccount.Id && m.TransferredDateTime.HasValue && m.TransferredDateTime.Value.Month == currentMonth)
-                .SumAsync(m => m.Amount);
-            var remainingOperationalLimit = currentAccount.OperationalLimit - totalTransfersThisMonth;
-            if (remainingOperationalLimit < model.Amount)
+            var totalAmountOperationsOATransfers = _context.Movements
+                                                                    .Where(t => t.OriginalAccountId == originalAccount.Id &&
+                                                                    t.TransferredDateTime!.Value.Month == model.TransferredDateTime.Month)
+                                                                    .Sum(t => t.Amount);
+
+            var totalAmountOperationsOADeposits = _context.Deposits
+                                                                 .Where(d => d.AccountId == originalAccount.Id &&
+                                                                 d.DepositDateTime.Month == model.TransferredDateTime.Month)
+                                                                 .Sum(d => d.Amount);
+
+            var totalAmountOperationsOAExtractions = _context.Withdrawals
+                                                                  .Where(e => e.AccountId == originalAccount.Id &&
+                                                                  e.DepositDateTime.Month == model.TransferredDateTime.Month)
+                                                                  .Sum(e => e.Amount);
+
+            var totalAmountOperationsOA = totalAmountOperationsOATransfers + totalAmountOperationsOADeposits + totalAmountOperationsOAExtractions + model.Amount;
+
+             if (totalAmountOperationsOA > originalAccount.CurrentAccount!.OperationalLimit)
             {
-                return (false, "The transfer amount exceeds the operational limit.");
+                throw new Exception("OriginAccount exceeded the operational limit.");
+            }
+
+            var totalAmountOperationsDATransfers = _context.Movements
+                                            .Where(t => t.DestinationAccountId == destinationAccount.Id &&
+                                            t.TransferredDateTime!.Value.Month == model.TransferredDateTime.Month)
+                                            .Sum(t => t.Amount);
+
+            var totalAmountOperationsDADeposits = _context.Deposits
+                                                      .Where(d => d.AccountId == destinationAccount.Id &&
+                                                      d.DepositDateTime.Month == model.TransferredDateTime.Month)
+                                                      .Sum(d => d.Amount);
+
+            var totalAmountOperationsDAExtractions = _context.Withdrawals
+                                                      .Where(e => e.AccountId == destinationAccount.Id &&
+                                                      e.DepositDateTime.Month == model.TransferredDateTime.Month)
+                                                      .Sum(e => e.Amount);
+
+            var totalAmountOperationsDA = totalAmountOperationsDATransfers + totalAmountOperationsDADeposits + 
+                totalAmountOperationsDAExtractions;
+
+            if ((model.Amount + totalAmountOperationsDA) > destinationAccount.CurrentAccount!.OperationalLimit)
+            {
+                throw new Exception("DestinationAccount exceeded the operational limit.");
             }
         }
 

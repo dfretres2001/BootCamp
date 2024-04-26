@@ -16,7 +16,7 @@ public class TransactionService : ITransactionService
         _withdrawalRepository = withdrawalRepository;
     }
 
-    public Task<List<TransactionDTO>> GetFilteredTransactions(FilterTransactionModel filters)
+    public Task<List<TransactionDTO>> GetFiltered(FilterTransactionModel filters)
     {
         throw new NotImplementedException();
     }

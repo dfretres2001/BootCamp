@@ -6,5 +6,5 @@ namespace Core.Interfaces.Repositories;
 
 public interface ITransactionRepository
 {
-    Task<List<TransactionDTO>> GetFilteredTransactions(FilterTransactionModel filters);
+    Task<List<TransactionDTO>> GetFiltered(FilterTransactionModel filter);
 }

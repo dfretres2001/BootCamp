@@ -5,5 +5,5 @@ namespace Core.Interfaces.Services;
 
 public interface ITransactionService
 {
-    Task<List<TransactionDTO>> GetFilteredTransactions(FilterTransactionModel filters);
+    Task<List<TransactionDTO>> GetFiltered(FilterTransactionModel filter);
 }
