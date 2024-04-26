@@ -4,20 +4,21 @@ using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
 using Core.Models;
 using Core.Request;
+using Infrastructure.Repositories;
 
 namespace Infrastructure.Services;
 
 public class TransactionService : ITransactionService
 {
-    private readonly IWithdrawalRepository _withdrawalRepository;
+    private readonly ITransactionRepository _transactionRepository;
 
-    public TransactionService(IWithdrawalRepository withdrawalRepository)
+    public TransactionService(ITransactionRepository transactionRepository)
     {
-        _withdrawalRepository = withdrawalRepository;
+        _transactionRepository = transactionRepository;
     }
 
-    public Task<List<TransactionDTO>> GetFiltered(FilterTransactionModel filters)
+    public async Task<List<TransactionDTO>> GetFiltered(FilterTransactionModel filter)
     {
-        throw new NotImplementedException();
+        return await _transactionRepository.GetFiltered(filter);
     }
 }
