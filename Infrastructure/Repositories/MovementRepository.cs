@@ -1,6 +1,4 @@
-﻿
-
-using Core.Constants;
+﻿using Core.Constants;
 using Core.Entities;
 using Core.Exceptions;
 using Core.Interfaces.Repositories;
@@ -10,7 +8,6 @@ using Infrastructure.Contexts;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Principal;
-
 namespace Infrastructure.Repositories;
 
 public class MovementRepository : IMovementRepository
@@ -77,12 +74,12 @@ public class MovementRepository : IMovementRepository
         {
             return (false, "Incompatible account types.");
         }
-
         if (originalAccount.CurrencyId != destinationAccount.CurrencyId)
         {
-            return (false, "Incompatible currencies.");
+            return (false, "Incompatible currencies. " +
+                "The origin and destination accounts must have the same currency.");
         }
-            if (originalAccount.Type == AccountType.Current)
+        if (originalAccount.Type == AccountType.Current)
         {
             var totalAmountOperationsOATransfers = _context.Movements
                                                                     .Where(t => t.OriginalAccountId == originalAccount.Id &&
@@ -104,7 +101,8 @@ public class MovementRepository : IMovementRepository
 
             var totalAmountOperationsOA = totalAmountOperationsOATransfers + totalAmountOperationsOADeposits + 
                 totalAmountOperationsOAExtractions + model.Amount;
-             if (totalAmountOperationsOA > originalAccount.CurrentAccount!.OperationalLimit)
+
+            if (totalAmountOperationsOA > originalAccount.CurrentAccount!.OperationalLimit)
             {
                 throw new Exception("OriginAccount exceeded the operational limit.");
             }
@@ -128,7 +126,6 @@ public class MovementRepository : IMovementRepository
                 throw new Exception("DestinationAccount exceeded the operational limit.");
             }
         }
-
         if (model.Amount <= 0)
         {
             return (false, "Invalid amount.");
@@ -186,7 +183,6 @@ public class MovementRepository : IMovementRepository
         {
             throw new NotFoundException($"Movement with ID {id} not found.");
         }
-
         return movement.Adapt<MovementDTO>();
     }
 }
