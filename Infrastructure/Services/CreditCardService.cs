@@ -20,22 +20,18 @@ public class CreditCardService : ICreditCardService
     {   
         return await _creditCardRepository.Add(model);
     }
-
     public async Task<bool> Delete(int id)
     {
         return await _creditCardRepository.Delete(id);
     }
-
     public async Task<CreditCardDTO> GetById(int id)
     {
         return await _creditCardRepository.GetById(id);
     }
-
     public async Task<List<CreditCardDTO>> GetFiltered(FilterCreditCardModel filter)
     {
         return await _creditCardRepository.GetFiltered(filter);
     }
-
     public async Task<CreditCardDTO> Update(UpdateCreditCardModel model)
     {
         return await _creditCardRepository.Update(model);

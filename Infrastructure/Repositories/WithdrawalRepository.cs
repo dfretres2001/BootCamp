@@ -11,7 +11,6 @@ namespace Infrastructure.Repositories;
 public class WithdrawalRepository : IWithdrawalRepository
 {
     private readonly BootcampContext _context;
-
     public WithdrawalRepository(BootcampContext context)
     {
         _context = context;
@@ -26,7 +25,6 @@ public class WithdrawalRepository : IWithdrawalRepository
         }
         var withdrawalToCreate = model.Adapt<Withdrawal>();
         _context.Withdrawals.Add(withdrawalToCreate);
-
         var account = await _context.Accounts
             .Include(m => m.CurrentAccount)
             .Include(m => m.SavingAccount)
@@ -51,33 +49,26 @@ public class WithdrawalRepository : IWithdrawalRepository
             .Include(m => m.Customer)
             .Where(m => m.Id == model.AccountId)
             .FirstOrDefaultAsync();
-
-        // Check if the amount is not negative
         if (model.Amount < 0)
         {
             throw new ArgumentException("The deposit amount cannot be negative.");
         }
-        // Check if the deposit date is not in the past
         if (model.DepositDateTime < DateTime.Now)
         {
             throw new ArgumentException("The deposit date cannot be in the past.");
         }
-
         if (account == null)
         {
             return (false, "The account does not exist.");
         }
-
         if (account.CurrentAccount == null || model.Amount > account.CurrentAccount.OperationalLimit)
         {
             return (false, "The withdrawal amount exceeds the operational limit.");
         }
-
         if (account.Customer.BankId != model.BankId)
         {
             return (false, "The destination bank does not match the entered bank.");
         }
-
         return (true, "Validations passed.");
     }
 }

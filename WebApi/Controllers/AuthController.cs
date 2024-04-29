@@ -7,21 +7,10 @@ namespace WebApi.Controllers;
 public class AuthController : BaseApiController
 {
     private readonly IJwtProvider _jwtProvider;
-
     public AuthController(IJwtProvider jwtProvider)
     {
         _jwtProvider = jwtProvider;
     }
-
-    //[HttpGet("generate-token")]
-    //[AllowAnonymous]
-    //public IActionResult Generate()
-    //{
-    //    string token = _jwtProvider.Generate();
-
-    //    return Ok(token);
-    //}
-
     [HttpGet("generate-token")]
     [AllowAnonymous]
     public IActionResult Generate([FromQuery] IEnumerable<string> roles)
@@ -39,7 +28,6 @@ public class AuthController : BaseApiController
     [Authorize]
     public IActionResult ProtectedEndpoint()
     {
-
         return Ok("Este es un endpoint protegido");
     }
 
@@ -47,7 +35,6 @@ public class AuthController : BaseApiController
     [Authorize(Roles = "Seguridad")]
     public IActionResult ProtectedEndpoint2()
     {
-
         return Ok("Este solo puede acceder un miembro de Seguridad");
     }
 
@@ -55,7 +42,6 @@ public class AuthController : BaseApiController
     [Authorize(Roles = "Invitado")]
     public IActionResult ProtectedEndpoint5()
     {
-
         return Ok("Este solo puede acceder un invitado");
     }
 
@@ -63,17 +49,14 @@ public class AuthController : BaseApiController
     [Authorize(Roles = "Admin")]
     public IActionResult ProtectedEndpoint3()
     {
-
         return Ok("Este solo puede acceder un Administrador");
     }
-
 
     [HttpGet("protected-endpoint-todes")]
     //[Authorize(Roles = "Admin", "Seguridad", "Invitado")]
     [Authorize(Roles = "Admin, Seguridad, Invitado")]
     public IActionResult ProtectedEndpoint4()
     {
-
         return Ok("Este endpoint pueden ver Admin, Seguridad e Invitado");
     }
 }

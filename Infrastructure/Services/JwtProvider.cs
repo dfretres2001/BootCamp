@@ -18,38 +18,6 @@ public class JwtProvider : IJwtProvider
     {
         _jwtSettings = jwtSettings.Value;
     }
-
-    //public string Generate()
-    //{
-    //    var userRoles = new List<string> {"Admin", "Seguridad", "Invitado"};
-    //    var claims = new List<Claim>
-    //    //var claims = new Claim[]
-    //    {
-    //        new Claim(JwtRegisteredClaimNames.Sub, "1"),
-    //        new Claim(JwtRegisteredClaimNames.Email, "prueba@prueba.com"),
-    //        //new Claim(ClaimTypes.Role, string.Join(",", userRoles))
-    //    };
-    //    foreach (var role in userRoles)
-    //    {
-    //        claims.Add(new Claim(ClaimTypes.Role, role));
-    //    }
-    //    var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
-    //    var signInCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-    //    var token = new JwtSecurityToken(
-    //            _jwtSettings.Issuer,
-    //            _jwtSettings.Audience,
-    //            claims,
-    //            null,
-    //            DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationInMinutes),
-    //            signInCredentials
-    //        );
-
-    //    string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-
-    //    return tokenValue;
-    //}
-
     public string Generate(IEnumerable<string> roles)
     {
         var claims = new List<Claim>
@@ -62,7 +30,6 @@ public class JwtProvider : IJwtProvider
         {
             claims.Add(new Claim(ClaimTypes.Role, role));
         }
-
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var signInCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -74,9 +41,7 @@ public class JwtProvider : IJwtProvider
                 DateTime.UtcNow.AddMinutes(_jwtSettings.ExpirationInMinutes),
                 signInCredentials
             );
-
         string tokenValue = new JwtSecurityTokenHandler().WriteToken(token);
-
         return tokenValue;
     }
 }

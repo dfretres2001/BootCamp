@@ -9,7 +9,6 @@ namespace WebApi.Controllers;
 public class TransactionController : BaseApiController
 {
     private readonly ITransactionService _transactionService;
-
     public TransactionController(ITransactionService transactionService)
     {
         _transactionService = transactionService;

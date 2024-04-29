@@ -8,8 +8,8 @@ namespace Core.Interfaces.Repositories;
 public interface ICurrencyRepository
 {
     Task<List<CurrencyDTO>> GetFiltered(FilterCurrencyModel filter);
-    Task<CurrencyDTO> Add(CreateCurrencyModel model); //cambio aqui recien
+    Task<CurrencyDTO> Add(CreateCurrencyModel model);
     Task<CurrencyDTO> GetById(int id);
-    Task<CurrencyDTO> Update(UpdateCurrencyModel model);//cambio aqui recien
+    Task<CurrencyDTO> Update(UpdateCurrencyModel model);
     Task<bool> Delete(int id);
 }

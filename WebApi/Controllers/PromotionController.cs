@@ -9,7 +9,6 @@ namespace WebApi.Controllers;
 public class PromotionController : BaseApiController
 {
     private readonly IPromotionService _service;
-
     public PromotionController(IPromotionService service)
     {
         _service = service;
@@ -33,7 +32,6 @@ public class PromotionController : BaseApiController
         var promotions = await _service.GetFiltered(filter);
         return Ok(promotions);
     }
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete([FromRoute] int id)
     {

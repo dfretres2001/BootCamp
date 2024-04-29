@@ -10,7 +10,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> entity)
     {
-        entity.HasKey(p => p.Id);
+        entity
+            .HasKey(p => p.Id);
 
         entity
             .Property(p => p.ProductType)

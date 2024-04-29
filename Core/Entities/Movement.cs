@@ -13,6 +13,4 @@ public class Movement
     public int OriginalAccountId { get; set; }
     public int DestinationAccountId { get; set; }
     public virtual Account Account { get; set; } = null!;
-    //public Account OriginalAccount { get; set; }
-    //public Account DestinationAccount { get; set; }
 }

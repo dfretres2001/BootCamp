@@ -14,7 +14,6 @@ namespace Infrastructure.Repositories;
 public class RequestRepository : IRequestRepository
 {
     private readonly BootcampContext _context;
-
     public RequestRepository(BootcampContext context)
     {
         _context = context;

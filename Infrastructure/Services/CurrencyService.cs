@@ -12,7 +12,6 @@ public class CurrencyService : ICurrencyService
 {
     
     private readonly ICurrencyRepository _currencyRepository;
-
     public CurrencyService(ICurrencyRepository currencyRepository)
     {
         _currencyRepository = currencyRepository;
@@ -25,17 +24,14 @@ public class CurrencyService : ICurrencyService
     {
         return await _currencyRepository.GetFiltered(filter);
     }
-
     public async Task<bool> Delete(int id)
     {
         return await _currencyRepository.Delete(id);
     }
-
     public async Task<CurrencyDTO> GetById(int id)
     {
         return await _currencyRepository.GetById(id);
     }
-
     public async Task<CurrencyDTO> Update(UpdateCurrencyModel model)
     {
         return await _currencyRepository.Update(model);

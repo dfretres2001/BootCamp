@@ -16,5 +16,4 @@ public class MovementDTO
     public int OriginalAccountId { get; set; }
     public int DestinationAccountId { get; set; }
     public AccountDTO Account { get; set; } = null!;
-    //public int? OriginalAccountOperationalLimit { get; set; }
 }

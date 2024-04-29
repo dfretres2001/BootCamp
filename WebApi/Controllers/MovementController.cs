@@ -8,7 +8,6 @@ namespace WebApi.Controllers;
 public class MovementController : BaseApiController
 {
     private readonly IMovementService _service;
-
     public MovementController(IMovementService service)
     {
         _service = service;
@@ -18,7 +17,6 @@ public class MovementController : BaseApiController
     {
         return Ok(await _service.Add(model));
     }
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById([FromRoute] int id)
     {

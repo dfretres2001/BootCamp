@@ -8,7 +8,6 @@ namespace WebApi.Controllers;
 public class PaymentController : BaseApiController
 {
     private readonly IPaymentService _paymentService;
-
     public PaymentController(IPaymentService paymentService)
     {
         _paymentService = paymentService;

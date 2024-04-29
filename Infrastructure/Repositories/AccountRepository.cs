@@ -70,7 +70,6 @@ public class AccountRepository : IAccountRepository
         model.Adapt(account);
         _context.Accounts.Update(account);
         await _context.SaveChangesAsync();
-        //var accountDTO = account.Adapt<AccountDTO>();
         var updateAccount = await _context.Accounts
         .Include(a => a.Currency)
         .Include(a => a.Customer)
@@ -95,7 +94,6 @@ public class AccountRepository : IAccountRepository
 
     public async Task<List<AccountDTO>> GetFiltered(FilterAccountModel filter)
     {
-        
         var query = _context.Accounts
                    .Include(a => a.Currency)
                    .Include(a => a.Customer)
@@ -103,7 +101,6 @@ public class AccountRepository : IAccountRepository
                    .Include(a => a.SavingAccount)
                    .Include(a => a.CurrentAccount)
                    .AsQueryable();
-
         if (filter.CurrencyId is not null)
         {
             query = query.Where(x =>
@@ -122,7 +119,6 @@ public class AccountRepository : IAccountRepository
                 x.Number != null &&
                 x.Number.Equals(filter.Number));
         }
-
         var result = await query.ToListAsync();
         var accountDTO = result.Adapt<List<AccountDTO>>();
         return accountDTO;

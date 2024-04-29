@@ -10,7 +10,6 @@ namespace WebApi.Controllers;
 public class CurrencyController : BaseApiController
 {
     private readonly ICurrencyService _service;
-
     public CurrencyController(ICurrencyService service)
     {
         _service = service;

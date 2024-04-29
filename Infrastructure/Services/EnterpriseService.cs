@@ -15,27 +15,18 @@ public class EnterpriseService : IEnterpriseService
     {
         _businessRepository = businessRepository;
     }
-
     public async Task<EnterpriseDTO> Add(CreateEnterpriseModel model)
     {
         return await _businessRepository.Add(model);
     }
-
     public async Task<bool> Delete(int id)
     {
         return await _businessRepository.Delete(id);
     }
-
     public async Task<EnterpriseDTO> GetById(int id)
     {
         return await _businessRepository.GetById(id);
     }
-
-    //public async Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter)
-    //{
-    //    throw new NotImplementedException();
-    //}
-
     public async Task<EnterpriseDTO> Update(UpdateEnterpriseModel model)
     {
         return await _businessRepository.Update(model);

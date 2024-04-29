@@ -16,7 +16,6 @@ namespace Infrastructure.Repositories;
 public class MovementRepository : IMovementRepository
 {
     private readonly BootcampContext _context;
-
     public MovementRepository(BootcampContext context)
     {
         _context = context;
@@ -24,7 +23,6 @@ public class MovementRepository : IMovementRepository
 
     public async Task<MovementDTO> Add(CreateMovementModel model)
     {
-        // Validate the transaction rules
         var validationResult = await ValidateTransactionRules(model);
         if (!validationResult.isValid)
         {
@@ -32,22 +30,17 @@ public class MovementRepository : IMovementRepository
         }
         var movement = model.Adapt<Movement>();
         movement.TransferredDateTime = DateTime.UtcNow;
-        // Add the movement to the database
         _context.Movements.Add(movement);
         await _context.SaveChangesAsync();
-        // Update the balances of the accounts
         var originalAccount = await _context.Accounts.FindAsync(model.OriginalAccountId);
         originalAccount.Balance -= model.Amount;
         var destinationAccount = await FindDestinationAccount(model);
         destinationAccount.Balance += model.Amount;
-
         if (originalAccount.Type == AccountType.Current)
         {
             originalAccount.CurrentAccount!.OperationalLimit -= model.Amount;
         }
         await _context.SaveChangesAsync();
-
-        // Map the movement to a DTO and return it
         var createdMovement = await _context.Movements
             .Include(a => a.Account)
             .ThenInclude(a => a.Currency)
@@ -60,7 +53,6 @@ public class MovementRepository : IMovementRepository
 
     public async Task<(bool isValid, string message)> ValidateTransactionRules(CreateMovementModel model)
     {
-        // Validate the original account
         var originalAccount = await _context.Accounts
             .Include(a => a.Currency) 
             .Include(a => a.CurrentAccount)
@@ -71,7 +63,6 @@ public class MovementRepository : IMovementRepository
         {
             return (false, "Invalid original account.");
         }
-        // Validate the destination account
         var destinationAccount = await _context.Accounts
             .Include(a => a.Currency)
             .Include(a => a.CurrentAccount)
@@ -91,36 +82,36 @@ public class MovementRepository : IMovementRepository
         {
             return (false, "Incompatible currencies.");
         }
-        // Validate the operational limit (if applicable)
             if (originalAccount.Type == AccountType.Current)
         {
             var totalAmountOperationsOATransfers = _context.Movements
                                                                     .Where(t => t.OriginalAccountId == originalAccount.Id &&
-                                                                    t.TransferredDateTime!.Value.Month == model.TransferredDateTime.Month)
+                                                                    t.TransferredDateTime!.Value.Month 
+                                                                    == model.TransferredDateTime.Month)
                                                                     .Sum(t => t.Amount);
 
             var totalAmountOperationsOADeposits = _context.Deposits
                                                                  .Where(d => d.AccountId == originalAccount.Id &&
-                                                                 d.DepositDateTime.Month == model.TransferredDateTime.Month)
+                                                                 d.DepositDateTime.Month == 
+                                                                 model.TransferredDateTime.Month)
                                                                  .Sum(d => d.Amount);
 
             var totalAmountOperationsOAExtractions = _context.Withdrawals
                                                                   .Where(e => e.AccountId == originalAccount.Id &&
-                                                                  e.DepositDateTime.Month == model.TransferredDateTime.Month)
+                                                                  e.DepositDateTime.Month == 
+                                                                  model.TransferredDateTime.Month)
                                                                   .Sum(e => e.Amount);
 
-            var totalAmountOperationsOA = totalAmountOperationsOATransfers + totalAmountOperationsOADeposits + totalAmountOperationsOAExtractions + model.Amount;
-
+            var totalAmountOperationsOA = totalAmountOperationsOATransfers + totalAmountOperationsOADeposits + 
+                totalAmountOperationsOAExtractions + model.Amount;
              if (totalAmountOperationsOA > originalAccount.CurrentAccount!.OperationalLimit)
             {
                 throw new Exception("OriginAccount exceeded the operational limit.");
             }
-
             var totalAmountOperationsDATransfers = _context.Movements
                                             .Where(t => t.DestinationAccountId == destinationAccount.Id &&
                                             t.TransferredDateTime!.Value.Month == model.TransferredDateTime.Month)
                                             .Sum(t => t.Amount);
-
             var totalAmountOperationsDADeposits = _context.Deposits
                                                       .Where(d => d.AccountId == destinationAccount.Id &&
                                                       d.DepositDateTime.Month == model.TransferredDateTime.Month)
@@ -130,27 +121,22 @@ public class MovementRepository : IMovementRepository
                                                       .Where(e => e.AccountId == destinationAccount.Id &&
                                                       e.DepositDateTime.Month == model.TransferredDateTime.Month)
                                                       .Sum(e => e.Amount);
-
             var totalAmountOperationsDA = totalAmountOperationsDATransfers + totalAmountOperationsDADeposits + 
                 totalAmountOperationsDAExtractions;
-
             if ((model.Amount + totalAmountOperationsDA) > destinationAccount.CurrentAccount!.OperationalLimit)
             {
                 throw new Exception("DestinationAccount exceeded the operational limit.");
             }
         }
 
-        // Validate the amount
         if (model.Amount <= 0)
         {
             return (false, "Invalid amount.");
         }
-        // Validate the transfer date and time
         if (model.TransferredDateTime == null)
         {
             return (false, "Invalid transfer date and time.");
         }
-        // Validate the destination bank (if applicable)
         if (originalAccount.Customer != null && originalAccount.Customer.Bank.Id
             == model.DestinationBankId)
         {
@@ -165,18 +151,12 @@ public class MovementRepository : IMovementRepository
         await _context.SaveChangesAsync();
         return (true, "Transaction is valid.");
     }
-
-    //busca la cuenta destino utilizando el número de cuenta, el nro ci.
-    //Si se proporciona un Id de cuenta destino, se devuelve directamente esa cuenta.
-    //Si no se encuentra la cuenta destino, devuelve null.
     public async Task<Account?> FindDestinationAccount(CreateMovementModel model)
     {
-        // If the destination account ID is provided, use it
         if (model.DestinationAccountId != 0)
         {
             return await _context.Accounts.FindAsync(model.DestinationAccountId);
         }
-        // Otherwise, search for the destination account using the provided data
         return await _context.Accounts
             .Include(a => a.Currency)
             .Include(a => a.CurrentAccount)
@@ -202,7 +182,6 @@ public class MovementRepository : IMovementRepository
             .ThenInclude(a => a.Customer)
             .ThenInclude(c => c.Bank)
             .FirstOrDefaultAsync(m => m.Id == id);
-
         if (movement == null)
         {
             throw new NotFoundException($"Movement with ID {id} not found.");

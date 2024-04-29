@@ -14,10 +14,8 @@ public class AccountDTO
     public decimal Balance { get; set; }
     public string Status { get; set; } = string.Empty;
     //public IsDeletedStatus IsDeleted { get; set; } = IsDeletedStatus.False;
-    //public int CurrencyId { get; set; } //ojo
     public CurrencyDTO Currency { get; set; } = null!;
-    //public int CustomerId { get; set; } //ojo
     public CustomerDTO Customer { get; set; } = null!;
     public SavingAccountDTO? SavingAccount { get; set; } 
-    public CurrentAccountDTO? CurrentAccount { get; set; } //OJO
+    public CurrentAccountDTO? CurrentAccount { get; set; } 
 }

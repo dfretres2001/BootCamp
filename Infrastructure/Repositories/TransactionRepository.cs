@@ -21,24 +21,19 @@ public class TransactionRepository : ITransactionRepository
                         .Where(t => filter.ConceptType == TransactionType.All ||
                         filter.ConceptType == TransactionType.Transfer)
                         .ToList();
-
         var paymentServices = _context.Payments
                                       .Where(ps => filter.ConceptType == TransactionType.All ||
                                       filter.ConceptType == TransactionType.Payment)
                                       .ToList();
-
         var deposits = _context.Deposits
                                .Where(d => filter.ConceptType == TransactionType.All ||
                                filter.ConceptType == TransactionType.Deposit)
                                .ToList();
-
         var extractions = _context.Withdrawals
                                   .Where(e => filter.ConceptType == TransactionType.All ||
                                   filter.ConceptType == TransactionType.Withdrawal)
                                   .ToList();
-
         List<TransactionDTO> transactions = new List<TransactionDTO>();
-
         transfers.ForEach(t => {
             transactions.Add(new TransactionDTO()
             {
@@ -63,7 +58,6 @@ public class TransactionRepository : ITransactionRepository
                 AccountId = ps.AccountId
             });
         });
-
         deposits.ForEach(d => {
             transactions.Add(new TransactionDTO()
             {
@@ -76,7 +70,6 @@ public class TransactionRepository : ITransactionRepository
                 AccountId = d.AccountId
             });
         });
-
         extractions.ForEach(e => {
             transactions.Add(new TransactionDTO()
             {
@@ -89,7 +82,6 @@ public class TransactionRepository : ITransactionRepository
                 AccountId = e.AccountId
             });
         });
-
         var result = transactions
                         .Where(t => t.AccountId == filter.AccountId &&
                         (filter.Month == null && filter.Year == null ||
@@ -97,7 +89,6 @@ public class TransactionRepository : ITransactionRepository
                         (filter.FromDate == null && filter.ToDate == null ||
                         t.TransferredDateTime >= filter.FromDate && t.TransferredDateTime <= filter.ToDate))
                         .ToList();
-
         return result;
     }
 }

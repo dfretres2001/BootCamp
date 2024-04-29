@@ -8,7 +8,6 @@ namespace WebApi.Controllers;
 public class AccountController : BaseApiController
 {
     private readonly IAccountService _service;
-
     public AccountController(IAccountService accountService)
     {
         _service = accountService;
@@ -16,7 +15,6 @@ public class AccountController : BaseApiController
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(int id)
     => Ok(await _service.GetById(id));
-
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateAccountRequest request)
     {

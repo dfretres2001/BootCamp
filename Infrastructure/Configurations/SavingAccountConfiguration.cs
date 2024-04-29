@@ -16,8 +16,6 @@ public class SavingAccountConfiguration : IEntityTypeConfiguration<SavingAccount
             .Property(e => e.HolderName)
             .HasMaxLength(100)
             .IsRequired();
-
-
         entity
             .HasOne(d => d.Account)
             .WithOne(p => p.SavingAccount)

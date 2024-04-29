@@ -8,12 +8,10 @@ namespace WebApi.Controllers;
 public class WithdrawalController : BaseApiController
 {
     private readonly IWithdrawalService _withdrawalService;
-
     public WithdrawalController(IWithdrawalService withdrawalService)
     {
         _withdrawalService = withdrawalService;
     }
-
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateWithdrawalModel request)
     {

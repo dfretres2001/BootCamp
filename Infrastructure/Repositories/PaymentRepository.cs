@@ -13,7 +13,6 @@ namespace Infrastructure.Repositories;
 public class PaymentRepository : IPaymentRepository
 {
     private readonly BootcampContext _context;
-
     public PaymentRepository(BootcampContext context)
     {
         _context = context;
@@ -28,9 +27,7 @@ public class PaymentRepository : IPaymentRepository
         {
             throw new Exception("Account not found.");
         }
-
         var service = await _context.Services.FindAsync(model.ServiceId);
-
         if (service == null)
         {
             throw new Exception("Service not found.");
@@ -45,13 +42,9 @@ public class PaymentRepository : IPaymentRepository
             AccountId = model.AccountId,
             Account = account
         };
-
         _context.Payments.Add(payment);
         await _context.SaveChangesAsync();
-
-        // Create a new PaymentDTO object by mapping the Payment object
         var paymentDTO = payment.Adapt<PaymentDTO>();
-
         return paymentDTO;
     }
 }

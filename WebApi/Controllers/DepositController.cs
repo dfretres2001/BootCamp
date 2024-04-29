@@ -8,7 +8,6 @@ namespace WebApi.Controllers;
 public class DepositController : BaseApiController
 {
     private readonly IDepositService _depositService;
-
     public DepositController(IDepositService depositService)
     {
         _depositService = depositService;

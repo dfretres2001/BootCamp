@@ -9,7 +9,6 @@ namespace WebApi.Controllers;
 public class CreditCardController : BaseApiController
 {
     private readonly ICreditCardService _service;
-
     public CreditCardController(ICreditCardService creditCardService)
     {
         _service = creditCardService;

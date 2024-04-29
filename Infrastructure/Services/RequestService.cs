@@ -11,7 +11,6 @@ namespace Infrastructure.Services;
 public class RequestService : IRequestService
 {
     private readonly IRequestRepository _requestRepository;
-
     public RequestService(IRequestRepository requestRepository)
     {
         _requestRepository = requestRepository;

@@ -11,15 +11,6 @@ public class TransactionMappingConfiguration : IRegister
 {
     public void Register(TypeAdapterConfig config)
     {
-        config.NewConfig<Movement, TransactionDTO>()
-        //.Map(dest => dest.Id, src => src.Id)
-        //    .Map(dest => dest., src => "Movement")
-        //    .Map(dest => dest.Description, src => src.Description)
-        //    .Map(dest => dest.Amount, src => src.Amount)
-        //    .Map(dest => dest.TransferredDateTime, src => src.TransferredDateTime)
-        //    .Map(dest => dest.AccountId, src => src.OriginalAccountId) //poner que sea el origen account
-        //    .Map(dest => dest.AccountId, src => src.DestinationAccountId); //que se sea destination
-            ;
         //Del Creation object hacia la entidad
         config.NewConfig<CreateTransferModel, Movement>()
             .Map(dest => dest.OriginalAccountId, src => src.OriginAccountId)

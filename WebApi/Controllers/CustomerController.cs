@@ -8,7 +8,6 @@ namespace WebApi.Controllers;
 public class CustomerController : BaseApiController
 {
     private readonly ICustomerService _customerService;
-
     public CustomerController(ICustomerService customerService)
     {
         _customerService = customerService;

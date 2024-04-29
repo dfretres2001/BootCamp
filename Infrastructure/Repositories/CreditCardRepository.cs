@@ -56,9 +56,7 @@ public class CreditCardRepository : ICreditCardRepository
 
         if (creditCard is null) throw new Exception("CreditCard was not found");
         model.Adapt(creditCard);
-
         _context.CreditCards.Update(creditCard);
-
         await _context.SaveChangesAsync();
         var creditCardDTO = creditCard.Adapt<CreditCardDTO>();
         return creditCardDTO;
@@ -66,13 +64,9 @@ public class CreditCardRepository : ICreditCardRepository
     public async Task<bool> Delete(int id)
     {
         var creditCard = await _context.CreditCards.FindAsync(id);
-
         if (creditCard is null) throw new Exception("CreditCard not found");
-
         _context.CreditCards.Remove(creditCard);
-
         var result = await _context.SaveChangesAsync();
-
         return result > 0;
     }
 
@@ -84,13 +78,9 @@ public class CreditCardRepository : ICreditCardRepository
             .Include(c => c.Currency)
             .AsQueryable();
         var creditCard = await _context.CreditCards.FindAsync(id);
-
         if (creditCard is null) throw new NotFoundException($"Credit Card with id: {id} doest not exist");
-
         var result = await query.ToListAsync();
-
         var creditCardDTO = creditCard.Adapt<CreditCardDTO>();
-
         return creditCardDTO;
     }
     public async Task<List<CreditCardDTO>> GetFiltered(FilterCreditCardModel filter)
@@ -100,7 +90,6 @@ public class CreditCardRepository : ICreditCardRepository
                    .ThenInclude(Customer => Customer.Bank)
                    .Include(c => c.Currency)
                    .AsQueryable();
-
         if (!string.IsNullOrWhiteSpace(filter.Designation))
         {
             var designationUpper = filter.Designation.ToUpper();

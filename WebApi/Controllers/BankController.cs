@@ -20,16 +20,6 @@ public class BankController : BaseApiController
     //[Authorize(Roles ="Admin, Seguridad, Invitado")]
     public async Task<IActionResult> Create([FromBody] CreateBankModel request)
     {
-        //if (string.IsNullOrEmpty(request.Name))
-        //{
-        //    return BadRequest("Name is required");
-
-        //}
-        //if (request.Name.Length<5) 
-        //{
-        //return BadRequest("Name must have at least 5 characters");
-
-        //}
         return Ok(await _service.Add(request));
     }
 

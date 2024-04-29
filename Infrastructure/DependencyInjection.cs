@@ -16,7 +16,6 @@ namespace Infrastructure;
 
 public static class DependencyInjection
 {
-
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDatabase(configuration);
@@ -24,14 +23,12 @@ public static class DependencyInjection
         services.AddServices();
         services.AddMapping();
         services.AddValidation();
-
         return services;
     }
 
     public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("Bootcamp");
-
         services.AddDbContext<BootcampContext>(options =>
         {
             options.UseNpgsql(connectionString);
@@ -55,7 +52,6 @@ public static class DependencyInjection
         services.AddScoped<IDepositRepository, DepositRepository>();
         services.AddScoped<IWithdrawalRepository, WithdrawalRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
-
         return services;
     }
 
@@ -83,10 +79,8 @@ public static class DependencyInjection
     {
         var config = TypeAdapterConfig.GlobalSettings;
         config.Scan(Assembly.GetExecutingAssembly());
-
         services.AddSingleton(config);
         services.AddScoped<IMapper, ServiceMapper>();
-
         return services;
     }
 

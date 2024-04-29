@@ -18,15 +18,10 @@ public partial class BootcampContext : DbContext
     }
 
     public virtual DbSet<Bank> Banks { get; set; }
-
     public virtual DbSet<SavingAccount> SavingAccounts { get; set; }
-
     public virtual DbSet<Customer> Customers { get; set; }
-
     public virtual DbSet<Account> Accounts { get; set; }
-
     public virtual DbSet<CurrentAccount> CurrentAccounts { get; set; }
-
     public virtual DbSet<Movement> Movements { get; set; }
     public virtual DbSet<Currency> Currencies { get; set; }
     public virtual DbSet<CreditCard> CreditCards { get; set; }
@@ -39,8 +34,6 @@ public partial class BootcampContext : DbContext
     public virtual DbSet<Payment> Payments { get; set; }
     public virtual DbSet<Deposit> Deposits { get; set; }
     public virtual DbSet<Withdrawal> Withdrawals { get; set; }
-
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
        
@@ -61,7 +54,6 @@ public partial class BootcampContext : DbContext
         modelBuilder.ApplyConfiguration(new PaymentConfiguration());
         modelBuilder.ApplyConfiguration(new DepositConfiguration());
         modelBuilder.ApplyConfiguration(new WithdrawalConfiguration());
-
         OnModelCreatingPartial(modelBuilder);
     }
 

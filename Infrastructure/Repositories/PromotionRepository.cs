@@ -38,7 +38,6 @@ public class PromotionRepository : IPromotionRepository
             .Include(x => x.PromotionsEnterprises)
             .ThenInclude(x => x.Enterprise)
             .FirstOrDefaultAsync(a => a.Id == promotion.Id);
-
         var promotionDTO = createdPromotion.Adapt<PromotionDTO>();
         promotionDTO.RelatedEnterprises = createdPromotion.PromotionsEnterprises
                     .Select(pe => pe.Enterprise.Adapt<EnterpriseDTO>())
@@ -64,7 +63,6 @@ public class PromotionRepository : IPromotionRepository
         var promotion = await query.FirstOrDefaultAsync(a => a.Id == id);
         if (promotion is null)
             throw new NotFoundException($"Promotion with id: {id} not found");
-
         var promotionDTO = promotion.Adapt<PromotionDTO>();
         return promotionDTO;
     }
@@ -92,7 +90,6 @@ public class PromotionRepository : IPromotionRepository
             query = query.Where(x => x.Discount == filter.Discount);
 
         }
-
         var result = await query.ToListAsync();
         var promotionDTO = result.Adapt<List<PromotionDTO>>();
         return promotionDTO;
@@ -123,7 +120,6 @@ public class PromotionRepository : IPromotionRepository
             };
             promotion.PromotionsEnterprises.Add(promotionEnterprise);
         }
-
         await _context.SaveChangesAsync();
         var promotionDTO = promotion.Adapt<PromotionDTO>();
         return promotionDTO;

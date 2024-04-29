@@ -7,7 +7,6 @@ namespace Core.Interfaces.Repositories;
 
 public interface IEnterpriseRepository
 {
-    //Task<List<EnterpriseDTO>> GetFiltered(FilterEnterpriseModel filter);
     Task<EnterpriseDTO> GetById(int id);
     Task<EnterpriseDTO> Add(CreateEnterpriseModel model);
     Task<EnterpriseDTO> Update(UpdateEnterpriseModel model);

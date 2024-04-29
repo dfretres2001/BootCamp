@@ -13,7 +13,6 @@ public class WithdrawalConfiguration : IEntityTypeConfiguration<Withdrawal>
         entity
            .HasKey(e => e.Id)
            .HasName("Withdrawal_pkey");
-
         entity
          .Property(e => e.Amount)
          .HasPrecision(20, 5);
